@@ -103,7 +103,7 @@ public class ProductServiceImpl implements ProductService {
         product.setActive(request.active());
         product.setCategory(category);
         product.setBrand(brand);
-        product.setUpdatedAt(LocalDateTime.now());
+        product.setUpdatedAt(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")));
 
         product = repository.save(product);
 
