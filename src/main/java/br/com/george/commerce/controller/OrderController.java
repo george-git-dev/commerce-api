@@ -1,0 +1,33 @@
+package br.com.george.commerce.controller;
+
+import br.com.george.commerce.dto.order.CreateOrderRequest;
+import br.com.george.commerce.dto.order.OrderResponse;
+import br.com.george.commerce.service.OrderService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/users/{userId}/orders")
+public class OrderController {
+
+    private final OrderService orderService;
+
+    @PostMapping("/checkout")
+    public OrderResponse checkout(@PathVariable Long userId, @Valid @RequestBody CreateOrderRequest request) {
+        return orderService.checkout(userId, request);
+    }
+
+    @GetMapping
+    public List<OrderResponse> findByUser(@PathVariable Long userId) {
+        return orderService.findByUser(userId);
+    }
+
+    @GetMapping("/{orderId}")
+    public OrderResponse findById(@PathVariable Long orderId) {
+        return orderService.findById(orderId);
+    }
+}
