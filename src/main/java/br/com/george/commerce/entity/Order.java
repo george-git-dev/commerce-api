@@ -38,4 +38,7 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items;
+
+    @OneToOne(mappedBy = "order")
+    private Payment payment;
 }

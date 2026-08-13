@@ -2,6 +2,7 @@ package br.com.george.commerce.service.impl;
 
 import br.com.george.commerce.dto.order.CreateOrderRequest;
 import br.com.george.commerce.dto.order.OrderResponse;
+import br.com.george.commerce.dto.order.UpdateOrderStatusRequest;
 import br.com.george.commerce.entity.*;
 import br.com.george.commerce.enums.OrderStatus;
 import br.com.george.commerce.exception.*;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -50,8 +52,8 @@ public class OrderServiceImpl implements OrderService {
         Order order = Order.builder()
                 .user(user)
                 .address(address)
-                .status(OrderStatus.PENDING)
-                .createdAt(LocalDateTime.now())
+                .status(OrderStatus.PENDENTE)
+                .createdAt(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")))
                 .build();
 
         List<OrderItem> items = cart.getItems()
@@ -101,4 +103,35 @@ public class OrderServiceImpl implements OrderService {
                 .map(mapper::toResponse)
                 .toList();
     }
+
+    @Override
+    public OrderResponse updateStatus(Long orderId, UpdateOrderStatusRequest request) {
+
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException(orderId));
+
+        OrderStatus current = order.getStatus();
+        OrderStatus target = request.status();
+
+        boolean validTransition = switch (current) {
+
+            case PENDENTE -> target == OrderStatus.PAGO || target == OrderStatus.CANCELADO;
+
+            case PAGO -> target == OrderStatus.ENVIADO || target == OrderStatus.CANCELADO;
+
+            case ENVIADO -> target == OrderStatus.ENTREGUE;
+
+            case ENTREGUE, CANCELADO -> false;
+        };
+
+        if (!validTransition) {
+            throw new InvalidOrderStatusTransitionException(current, target);
+        }
+
+        order.setStatus(target);
+
+        order = orderRepository.save(order);
+
+        return mapper.toResponse(order);
+    }
+
 }
