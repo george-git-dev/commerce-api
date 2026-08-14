@@ -1,8 +1,10 @@
 package br.com.george.commerce.service.impl;
 
 import br.com.george.commerce.dto.user.CreateUserRequest;
+import br.com.george.commerce.dto.user.UpdateUserRoleRequest;
 import br.com.george.commerce.dto.user.UserResponse;
 import br.com.george.commerce.entity.User;
+import br.com.george.commerce.enums.Role;
 import br.com.george.commerce.exception.EmailAlreadyExistsException;
 import br.com.george.commerce.exception.UserNotFoundException;
 import br.com.george.commerce.mapper.UserMapper;
@@ -49,7 +51,7 @@ public class UserServiceImpl implements UserService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .active(true)
-                .role(request.role())
+                .role(Role.ROLE_CUSTOMER)
                 .build();
 
         user = repository.save(user);
@@ -65,7 +67,6 @@ public class UserServiceImpl implements UserService {
         user.setName(request.name());
         user.setEmail(request.email());
         user.setPassword(passwordEncoder.encode(request.password()));
-        user.setRole(request.role());
 
         user = repository.save(user);
 
@@ -76,5 +77,17 @@ public class UserServiceImpl implements UserService {
     public void delete(Long id) {
         User user = repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         repository.delete(user);
+    }
+
+    @Override
+    public UserResponse updateRole(Long id, UpdateUserRoleRequest request) {
+
+        User user = repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+
+        user.setRole(request.role());
+
+        user = repository.save(user);
+
+        return mapper.toResponse(user);
     }
 }

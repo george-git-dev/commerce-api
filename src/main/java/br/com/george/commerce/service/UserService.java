@@ -1,6 +1,7 @@
 package br.com.george.commerce.service;
 
 import br.com.george.commerce.dto.user.CreateUserRequest;
+import br.com.george.commerce.dto.user.UpdateUserRoleRequest;
 import br.com.george.commerce.dto.user.UserResponse;
 
 import java.util.List;
@@ -16,5 +17,7 @@ public interface UserService {
     UserResponse update(Long id, CreateUserRequest request);
 
     void delete(Long id);
+
+    UserResponse updateRole(Long id, UpdateUserRoleRequest request);
 
 }
