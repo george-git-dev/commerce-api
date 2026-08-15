@@ -1,8 +1,6 @@
 package br.com.george.commerce.controller;
 
-import br.com.george.commerce.dto.user.CreateUserRequest;
-import br.com.george.commerce.dto.user.UpdateUserRoleRequest;
-import br.com.george.commerce.dto.user.UserResponse;
+import br.com.george.commerce.dto.user.*;
 import br.com.george.commerce.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -45,5 +43,20 @@ public class UserController {
     @PatchMapping("/{id}/role")
     public UserResponse updateRole(@PathVariable Long id, @RequestBody UpdateUserRoleRequest request) {
         return userService.updateRole(id, request);
+    }
+
+    @GetMapping("/me")
+    public UserResponse me() {
+        return userService.me();
+    }
+
+    @PatchMapping("/me/password")
+    public void changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        userService.changePassword(request);
+    }
+
+    @PatchMapping("/me/email")
+    public void changeEmail(@Valid @RequestBody ChangeEmailRequest request) {
+        userService.changeEmail(request);
     }
 }

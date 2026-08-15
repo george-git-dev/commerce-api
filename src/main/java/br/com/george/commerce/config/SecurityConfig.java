@@ -25,11 +25,14 @@ public class SecurityConfig {
 
         return http
                 .csrf(AbstractHttpConfigurer::disable)
+
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS))
+
                 .authorizeHttpRequests(auth -> auth
 
+                        // Públicos
                         .requestMatchers("/auth/**")
                         .permitAll()
 
@@ -39,6 +42,7 @@ public class SecurityConfig {
                         )
                         .permitAll()
 
+                        // Produtos
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/products"
@@ -49,6 +53,48 @@ public class SecurityConfig {
                         )
 
                         .requestMatchers(
+                                HttpMethod.PUT,
+                                "/products/*"
+                        )
+                        .hasAnyRole(
+                                "ADMIN",
+                                "SUPER_ADMIN"
+                        )
+
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/products/*"
+                        )
+                        .hasRole("SUPER_ADMIN")
+
+                        // Usuários
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/users"
+                        )
+                        .hasAnyRole(
+                                "VIEWER",
+                                "ADMIN",
+                                "SUPER_ADMIN"
+                        )
+
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/users/*"
+                        )
+                        .hasAnyRole(
+                                "VIEWER",
+                                "ADMIN",
+                                "SUPER_ADMIN"
+                        )
+
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/users/*"
+                        )
+                        .hasRole("SUPER_ADMIN")
+
+                        .requestMatchers(
                                 HttpMethod.PATCH,
                                 "/users/*/role"
                         )
@@ -57,10 +103,12 @@ public class SecurityConfig {
                         .anyRequest()
                         .authenticated()
                 )
+
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
                 )
+
                 .build();
     }
 }
