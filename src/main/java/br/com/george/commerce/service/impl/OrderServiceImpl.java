@@ -9,6 +9,7 @@ import br.com.george.commerce.exception.*;
 import br.com.george.commerce.mapper.OrderMapper;
 import br.com.george.commerce.repository.*;
 import br.com.george.commerce.service.OrderService;
+import br.com.george.commerce.service.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,9 @@ public class OrderServiceImpl implements OrderService {
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
+    private final ProductRepository productRepository;
     private final OrderMapper mapper;
+    private final JwtService jwtService;
 
     @Override
     @Transactional
@@ -55,6 +58,15 @@ public class OrderServiceImpl implements OrderService {
                 .status(OrderStatus.PENDENTE)
                 .createdAt(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")))
                 .build();
+
+        for (CartItem cartItem : cart.getItems()) {
+
+            int updatedRows = productRepository.decreaseStock(cartItem.getProduct().getId(), cartItem.getQuantity());
+
+            if (updatedRows == 0) {
+                throw new InsufficientStockException(cartItem.getProduct().getName());
+            }
+        }
 
         List<OrderItem> items = cart.getItems()
                 .stream()
@@ -132,6 +144,19 @@ public class OrderServiceImpl implements OrderService {
         order = orderRepository.save(order);
 
         return mapper.toResponse(order);
+    }
+
+    @Override
+    public List<OrderResponse> myOrders() {
+
+        String email = jwtService.getCurrentUserEmail();
+
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+        return orderRepository.findByUserId(user.getId())
+                .stream()
+                .map(mapper::toResponse)
+                .toList();
     }
 
 }

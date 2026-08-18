@@ -1,6 +1,7 @@
 package br.com.george.commerce.controller;
 
 import br.com.george.commerce.dto.user.CreateUserRequest;
+import br.com.george.commerce.dto.user.UpdateUserRoleRequest;
 import br.com.george.commerce.dto.user.UserResponse;
 import br.com.george.commerce.service.UserService;
 import jakarta.validation.Valid;
@@ -40,4 +41,10 @@ public class UserController {
     public void delete(@PathVariable Long id) {
         userService.delete(id);
     }
+
+    @PatchMapping("/{id}/role")
+    public UserResponse updateRole(@PathVariable Long id, @RequestBody UpdateUserRoleRequest request) {
+        return userService.updateRole(id, request);
+    }
+
 }

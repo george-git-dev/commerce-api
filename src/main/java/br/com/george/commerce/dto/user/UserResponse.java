@@ -8,6 +8,8 @@ public record UserResponse(
 
         String name,
 
+        String cpf,
+
         String email,
 
         Boolean active,

@@ -17,4 +17,5 @@ public interface AddressService {
 
     void delete(Long id);
 
+    List<AddressResponse> myAddresses();
 }

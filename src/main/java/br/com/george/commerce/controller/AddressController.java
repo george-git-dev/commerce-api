@@ -16,11 +16,6 @@ public class AddressController {
 
     private final AddressService addressService;
 
-    @GetMapping
-    public List<AddressResponse> findAll() {
-        return addressService.findAll();
-    }
-
     @GetMapping("/{id}")
     public AddressResponse findById(@PathVariable Long id) {
         return addressService.findById(id);
