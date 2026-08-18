@@ -8,8 +8,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users/{userId}/orders")
@@ -20,11 +18,6 @@ public class OrderController {
     @PostMapping("/checkout")
     public OrderResponse checkout(@PathVariable Long userId, @Valid @RequestBody CreateOrderRequest request) {
         return orderService.checkout(userId, request);
-    }
-
-    @GetMapping
-    public List<OrderResponse> findByUser(@PathVariable Long userId) {
-        return orderService.findByUser(userId);
     }
 
     @GetMapping("/{orderId}")

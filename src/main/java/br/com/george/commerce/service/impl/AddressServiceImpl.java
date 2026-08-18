@@ -10,6 +10,7 @@ import br.com.george.commerce.mapper.AddressMapper;
 import br.com.george.commerce.repository.AddressRepository;
 import br.com.george.commerce.repository.UserRepository;
 import br.com.george.commerce.service.AddressService;
+import br.com.george.commerce.service.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public class AddressServiceImpl implements AddressService {
     private final AddressRepository repository;
     private final UserRepository userRepository;
     private final AddressMapper mapper;
+    private final JwtService jwtService;
 
     @Override
     public List<AddressResponse> findAll() {
@@ -103,5 +105,16 @@ public class AddressServiceImpl implements AddressService {
     public void delete(Long id) {
         Address address = repository.findById(id).orElseThrow(() -> new AddressNotFoundException(id));
         repository.delete(address);
+    }
+
+    @Override
+    public List<AddressResponse> myAddresses() {
+        String email = jwtService.getCurrentUserEmail();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+        return repository.findByUserId(user.getId())
+                .stream()
+                .map(mapper::toResponse)
+                .toList();
     }
 }

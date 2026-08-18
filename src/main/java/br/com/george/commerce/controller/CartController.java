@@ -15,11 +15,6 @@ public class CartController {
 
     private final CartService cartService;
 
-    @GetMapping
-    public CartResponse findByUser(@PathVariable Long userId) {
-        return cartService.findByUser(userId);
-    }
-
     @PostMapping("/items")
     public CartResponse addItem(@PathVariable Long userId, @Valid @RequestBody CreateCartItemRequest request) {
         return cartService.addItem(userId, request);

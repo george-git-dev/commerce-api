@@ -14,6 +14,7 @@ import br.com.george.commerce.repository.CartRepository;
 import br.com.george.commerce.repository.ProductRepository;
 import br.com.george.commerce.repository.UserRepository;
 import br.com.george.commerce.service.CartService;
+import br.com.george.commerce.service.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,7 @@ public class CartServiceImpl implements CartService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final CartMapper mapper;
+    private final JwtService jwtService;
 
     @Override
     public CartResponse findByUser(Long userId) {
@@ -170,5 +172,28 @@ public class CartServiceImpl implements CartService {
                 .stream()
                 .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    @Override
+    public CartResponse myCart() {
+
+        String email = jwtService.getCurrentUserEmail();
+
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+        Cart cart = cartRepository.findByUserId(user.getId()).orElseGet(() -> {
+            Cart newCart = Cart.builder().user(user).build();
+            return cartRepository.save(newCart);
+        });
+
+        CartResponse response = mapper.toResponse(cart);
+
+        return new CartResponse(
+                response.id(),
+                response.userId(),
+                response.userName(),
+                calculateTotal(cart),
+                response.items()
+        );
     }
 }

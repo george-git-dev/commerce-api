@@ -16,4 +16,5 @@ public interface CartService {
 
     void clearCart(Long userId);
 
+    CartResponse myCart();
 }
