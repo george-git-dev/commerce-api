@@ -7,10 +7,7 @@ import br.com.george.commerce.entity.Cart;
 import br.com.george.commerce.entity.CartItem;
 import br.com.george.commerce.entity.Product;
 import br.com.george.commerce.entity.User;
-import br.com.george.commerce.exception.CartItemNotFoundException;
-import br.com.george.commerce.exception.CartNotFoundException;
-import br.com.george.commerce.exception.ProductNotFoundException;
-import br.com.george.commerce.exception.UserNotFoundException;
+import br.com.george.commerce.exception.*;
 import br.com.george.commerce.mapper.CartMapper;
 import br.com.george.commerce.repository.CartItemRepository;
 import br.com.george.commerce.repository.CartRepository;
@@ -27,6 +24,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
+
+    private static final int MAX_ITEMS_PER_PRODUCT = 10;
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
@@ -62,11 +61,29 @@ public class CartServiceImpl implements CartService {
 
         Optional<CartItem> existingItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), product.getId());
 
+        if (request.quantity() > MAX_ITEMS_PER_PRODUCT) {
+            throw new ProductQuantityLimitExceededException(MAX_ITEMS_PER_PRODUCT);
+        }
+
+        if (request.quantity() > product.getStock()) {
+            throw new InsufficientStockException(product.getName());
+        }
+
         if (existingItem.isPresent()) {
 
             CartItem item = existingItem.get();
 
-            item.setQuantity(item.getQuantity() + request.quantity());
+            int newQuantity = item.getQuantity() + request.quantity();
+
+            if (newQuantity > MAX_ITEMS_PER_PRODUCT) {
+                throw new ProductQuantityLimitExceededException(MAX_ITEMS_PER_PRODUCT);
+            }
+
+            if (newQuantity > product.getStock()) {
+                throw new InsufficientStockException(product.getName());
+            }
+
+            item.setQuantity(newQuantity);
 
             cartItemRepository.save(item);
 
@@ -112,6 +129,16 @@ public class CartServiceImpl implements CartService {
         Cart cart = cartRepository.findByUserId(userId).orElseThrow(() -> new CartNotFoundException(userId));
 
         CartItem item = cartItemRepository.findById(itemId).orElseThrow(() -> new CartItemNotFoundException(itemId));
+
+        if (request.quantity() > MAX_ITEMS_PER_PRODUCT) {
+            throw new ProductQuantityLimitExceededException(MAX_ITEMS_PER_PRODUCT);
+        }
+
+        Product product = item.getProduct();
+
+        if (request.quantity() > product.getStock()) {
+            throw new InsufficientStockException(product.getName());
+        }
 
         item.setQuantity(request.quantity());
 

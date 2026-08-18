@@ -27,6 +27,7 @@ public class OrderServiceImpl implements OrderService {
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
+    private final ProductRepository productRepository;
     private final OrderMapper mapper;
 
     @Override
@@ -55,6 +56,15 @@ public class OrderServiceImpl implements OrderService {
                 .status(OrderStatus.PENDENTE)
                 .createdAt(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")))
                 .build();
+
+        for (CartItem cartItem : cart.getItems()) {
+
+            int updatedRows = productRepository.decreaseStock(cartItem.getProduct().getId(), cartItem.getQuantity());
+
+            if (updatedRows == 0) {
+                throw new InsufficientStockException(cartItem.getProduct().getName());
+            }
+        }
 
         List<OrderItem> items = cart.getItems()
                 .stream()
