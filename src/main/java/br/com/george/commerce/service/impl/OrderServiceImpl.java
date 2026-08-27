@@ -8,6 +8,7 @@ import br.com.george.commerce.enums.OrderStatus;
 import br.com.george.commerce.exception.*;
 import br.com.george.commerce.mapper.OrderMapper;
 import br.com.george.commerce.repository.*;
+import br.com.george.commerce.service.DiscountService;
 import br.com.george.commerce.service.OrderService;
 import br.com.george.commerce.service.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -31,6 +33,9 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
     private final OrderMapper mapper;
     private final JwtService jwtService;
+    private final DiscountService discountService;
+    private final AffiliateRepository affiliateRepository;
+    private final AffiliateSaleRepository affiliateSaleRepository;
 
     @Override
     @Transactional
@@ -52,10 +57,16 @@ public class OrderServiceImpl implements OrderService {
             throw new EmptyCartException();
         }
 
+        BigDecimal total = cart.getItems().stream().map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity()))).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal discountApplied = discountService.calculateDiscount(cart);
+
         Order order = Order.builder()
                 .user(user)
                 .address(address)
                 .status(OrderStatus.PENDENTE)
+                .couponCode(cart.getCouponCode())
+                .discountApplied(discountApplied)
                 .createdAt(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")))
                 .build();
 
@@ -86,14 +97,33 @@ public class OrderServiceImpl implements OrderService {
                 })
                 .toList();
 
-        BigDecimal total = items.stream()
-                .map(OrderItem::getSubtotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        order.setTotal(total);
+        order.setTotal(total.subtract(discountApplied));
         order.setItems(items);
 
         Order savedOrder = orderRepository.save(order);
+
+        if (cart.getCouponCode() != null) {
+
+            Affiliate affiliate = affiliateRepository
+                    .findByCouponCode(cart.getCouponCode())
+                    .orElseThrow(CouponNotFoundException::new);
+
+            BigDecimal commissionAmount = order.getTotal()
+                    .multiply(affiliate.getCommissionPercentage().divide(BigDecimal.valueOf(100),2, RoundingMode.HALF_UP))
+                    .setScale(2, RoundingMode.HALF_UP);
+
+            AffiliateSale affiliateSale =
+                    AffiliateSale.builder()
+                            .affiliate(affiliate)
+                            .order(savedOrder)
+                            .saleAmount(order.getTotal())
+                            .commissionAmount(commissionAmount)
+                            .paid(false)
+                            .createdAt(LocalDateTime.now())
+                            .build();
+
+            affiliateSaleRepository.save(affiliateSale);
+        }
 
         cartItemRepository.deleteByCartId(cart.getId());
 
@@ -109,7 +139,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderResponse> findByUser(Long userId) {
-
         return orderRepository.findByUserId(userId)
                 .stream()
                 .map(mapper::toResponse)
@@ -151,7 +180,7 @@ public class OrderServiceImpl implements OrderService {
 
         String email = jwtService.getCurrentUserEmail();
 
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
 
         return orderRepository.findByUserId(user.getId())
                 .stream()

@@ -13,6 +13,12 @@ public record CartResponse(
 
         BigDecimal total,
 
+        String couponCode,
+
+        BigDecimal discountApplied,
+
+        BigDecimal totalWithDiscount,
+
         List<CartItemResponse> items
 
 ) {

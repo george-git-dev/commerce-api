@@ -17,4 +17,6 @@ public interface CartService {
     void clearCart(Long userId);
 
     CartResponse myCart();
+
+    void applyCoupon(String couponCode);
 }

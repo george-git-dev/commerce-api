@@ -2,6 +2,7 @@ package br.com.george.commerce.controller;
 
 
 import br.com.george.commerce.dto.address.AddressResponse;
+import br.com.george.commerce.dto.cart.ApplyCouponRequest;
 import br.com.george.commerce.dto.cart.CartResponse;
 import br.com.george.commerce.dto.order.OrderResponse;
 import br.com.george.commerce.dto.user.ChangeEmailRequest;
@@ -55,5 +56,10 @@ public class MeController {
     @PatchMapping("/email")
     public void changeEmail(@Valid @RequestBody ChangeEmailRequest request) {
         userService.changeEmail(request);
+    }
+
+    @PostMapping("/cart/coupon")
+    public void applyCoupon(@RequestBody ApplyCouponRequest request) {
+        cartService.applyCoupon(request.couponCode());
     }
 }

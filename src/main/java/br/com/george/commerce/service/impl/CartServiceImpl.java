@@ -3,22 +3,18 @@ package br.com.george.commerce.service.impl;
 import br.com.george.commerce.dto.cart.CartResponse;
 import br.com.george.commerce.dto.cart.CreateCartItemRequest;
 import br.com.george.commerce.dto.cart.UpdateCartItemRequest;
-import br.com.george.commerce.entity.Cart;
-import br.com.george.commerce.entity.CartItem;
-import br.com.george.commerce.entity.Product;
-import br.com.george.commerce.entity.User;
+import br.com.george.commerce.entity.*;
 import br.com.george.commerce.exception.*;
 import br.com.george.commerce.mapper.CartMapper;
-import br.com.george.commerce.repository.CartItemRepository;
-import br.com.george.commerce.repository.CartRepository;
-import br.com.george.commerce.repository.ProductRepository;
-import br.com.george.commerce.repository.UserRepository;
+import br.com.george.commerce.repository.*;
 import br.com.george.commerce.service.CartService;
+import br.com.george.commerce.service.DiscountService;
 import br.com.george.commerce.service.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,8 +28,11 @@ public class CartServiceImpl implements CartService {
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final AffiliateRepository affiliateRepository;
     private final CartMapper mapper;
     private final JwtService jwtService;
+    private final DiscountService discountService;
+
 
     @Override
     public CartResponse findByUser(Long userId) {
@@ -45,6 +44,9 @@ public class CartServiceImpl implements CartService {
                 response.userId(),
                 response.userName(),
                 calculateTotal(cart),
+                cart.getCouponCode(),
+                discountService.calculateDiscount(cart),
+                discountService.calculateTotalWithDiscount(cart),
                 response.items()
         );
     }
@@ -107,6 +109,9 @@ public class CartServiceImpl implements CartService {
                 response.userId(),
                 response.userName(),
                 calculateTotal(cart),
+                cart.getCouponCode(),
+                discountService.calculateDiscount(cart),
+                discountService.calculateTotalWithDiscount(cart),
                 response.items()
         );
     }
@@ -153,6 +158,9 @@ public class CartServiceImpl implements CartService {
                 response.userId(),
                 response.userName(),
                 calculateTotal(cart),
+                cart.getCouponCode(),
+                discountService.calculateDiscount(cart),
+                discountService.calculateTotalWithDiscount(cart),
                 response.items()
         );
     }
@@ -179,7 +187,7 @@ public class CartServiceImpl implements CartService {
 
         String email = jwtService.getCurrentUserEmail();
 
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
 
         Cart cart = cartRepository.findByUserId(user.getId()).orElseGet(() -> {
             Cart newCart = Cart.builder().user(user).build();
@@ -193,7 +201,43 @@ public class CartServiceImpl implements CartService {
                 response.userId(),
                 response.userName(),
                 calculateTotal(cart),
+                cart.getCouponCode(),
+                discountService.calculateDiscount(cart),
+                discountService.calculateTotalWithDiscount(cart),
                 response.items()
         );
     }
+
+    @Override
+    public void applyCoupon(String couponCode) {
+
+        String email = jwtService.getCurrentUserEmail();
+
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+
+        Cart cart = cartRepository.findByUserId(user.getId())
+                .orElseGet(() -> {
+                    Cart newCart = Cart.builder()
+                            .user(user)
+                            .build();
+
+                    return cartRepository.save(newCart);
+                });
+
+        Affiliate affiliate = affiliateRepository.findByCouponCode(couponCode).orElseThrow(CouponNotFoundException::new);
+
+        if (!affiliate.getActive()) {
+            throw new AffiliateInactiveException();
+        }
+
+        if (affiliate.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new CouponExpiredException();
+        }
+
+        cart.setCouponCode(couponCode);
+
+        cartRepository.save(cart);
+    }
+
+
 }

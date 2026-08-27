@@ -1,6 +1,7 @@
 package br.com.george.commerce.entity;
 
 import br.com.george.commerce.enums.OrderStatus;
+import br.com.george.commerce.enums.SaleChannel;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,6 +31,15 @@ public class Order {
     private Address address;
 
     private BigDecimal total;
+
+    private BigDecimal discountApplied;
+
+    private String notes;
+
+    private String couponCode;
+
+    @Enumerated(EnumType.STRING)
+    private SaleChannel saleChannel;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;

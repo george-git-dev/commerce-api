@@ -7,6 +7,7 @@ import br.com.george.commerce.dto.user.ResetPasswordRequest;
 import br.com.george.commerce.entity.PasswordResetToken;
 import br.com.george.commerce.entity.User;
 import br.com.george.commerce.exception.UserInactiveException;
+import br.com.george.commerce.exception.UserNotFoundException;
 import br.com.george.commerce.repository.PasswordResetTokenRepository;
 import br.com.george.commerce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,10 +47,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void forgotPassword(
-            ForgotPasswordRequest request) {
+    public void forgotPassword(ForgotPasswordRequest request) {
 
-        User user = userRepository.findByEmail(request.email()).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(request.email()).orElseThrow(UserNotFoundException::new);
 
         PasswordResetToken token =
                 PasswordResetToken.builder()

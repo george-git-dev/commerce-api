@@ -25,7 +25,11 @@ public record ProductResponse(
 
         String brandName,
 
-        List<ProductAttributeResponse> attributes
+        List<ProductAttributeResponse> attributes,
+
+        BigDecimal finalPrice,
+
+        Boolean promotionActive
 
 ) {
 }

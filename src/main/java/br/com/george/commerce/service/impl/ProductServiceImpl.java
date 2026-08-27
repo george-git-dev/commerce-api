@@ -2,21 +2,22 @@ package br.com.george.commerce.service.impl;
 
 import br.com.george.commerce.dto.product.CreateProductRequest;
 import br.com.george.commerce.dto.product.ProductResponse;
-import br.com.george.commerce.entity.Brand;
-import br.com.george.commerce.entity.Category;
-import br.com.george.commerce.entity.Product;
-import br.com.george.commerce.entity.ProductAttribute;
+import br.com.george.commerce.entity.*;
+import br.com.george.commerce.enums.DiscountType;
 import br.com.george.commerce.exception.BrandNotFoundException;
 import br.com.george.commerce.exception.CategoryNotFoundException;
 import br.com.george.commerce.exception.ProductNotFoundException;
 import br.com.george.commerce.mapper.ProductMapper;
 import br.com.george.commerce.repository.BrandRepository;
 import br.com.george.commerce.repository.CategoryRepository;
+import br.com.george.commerce.repository.ProductPromotionRepository;
 import br.com.george.commerce.repository.ProductRepository;
 import br.com.george.commerce.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -26,17 +27,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
+    private final ProductMapper mapper;
     private final ProductRepository repository;
     private final CategoryRepository categoryRepository;
     private final BrandRepository brandRepository;
-    private final ProductMapper mapper;
+    private final ProductPromotionRepository productPromotionRepository;
 
     @Override
     public List<ProductResponse> findAll() {
 
         return repository.findAll()
                 .stream()
-                .map(mapper::toResponse)
+                .map(this::toResponse)
                 .toList();
     }
 
@@ -45,7 +47,7 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = repository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
 
-        return mapper.toResponse(product);
+        return toResponse(product);
     }
 
     @Override
@@ -84,7 +86,7 @@ public class ProductServiceImpl implements ProductService {
 
         Product savedProduct = repository.save(product);
 
-        return mapper.toResponse(savedProduct);
+        return toResponse(savedProduct);
     }
 
     @Override
@@ -107,7 +109,7 @@ public class ProductServiceImpl implements ProductService {
 
         product = repository.save(product);
 
-        return mapper.toResponse(product);
+        return toResponse(product);
     }
 
     @Override
@@ -117,4 +119,63 @@ public class ProductServiceImpl implements ProductService {
 
         repository.delete(product);
     }
+
+    private BigDecimal calculateFinalPrice(Product product) {
+
+        Optional<ProductPromotion> productPromotion =
+                productPromotionRepository.findByProductId(product.getId());
+
+        if (productPromotion.isEmpty()) {
+            return product.getPrice();
+        }
+
+        Promotion promotion = productPromotion.get().getPromotion();
+
+        if (!promotion.isActiveNow()) {
+            return product.getPrice();
+        }
+
+        if (promotion.getDiscountType() == DiscountType.PERCENTAGE) {
+
+            BigDecimal discountPercentage = promotion.getDiscountValue().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+
+            BigDecimal discount = product.getPrice().multiply(discountPercentage);
+
+            return product.getPrice().subtract(discount).setScale(2, RoundingMode.HALF_UP);
+        }
+
+        BigDecimal finalPrice = product.getPrice().subtract(promotion.getDiscountValue());
+
+        return finalPrice.max(BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    private ProductResponse toResponse(Product product) {
+
+        BigDecimal finalPrice = calculateFinalPrice(product);
+
+        boolean promotionActive = productPromotionRepository
+                .findByProductId(product.getId())
+                .map(ProductPromotion::getPromotion)
+                .map(Promotion::isActiveNow)
+                .orElse(false);
+
+        ProductResponse response = mapper.toResponse(product);
+
+        return new ProductResponse(
+                response.id(),
+                response.name(),
+                response.description(),
+                response.price(),
+                response.stock(),
+                response.active(),
+                response.categoryId(),
+                response.categoryName(),
+                response.brandId(),
+                response.brandName(),
+                response.attributes(),
+                finalPrice,
+                promotionActive
+        );
+    }
+
 }
