@@ -6,8 +6,7 @@ import br.com.george.commerce.dto.user.ForgotPasswordRequest;
 import br.com.george.commerce.dto.user.ResetPasswordRequest;
 import br.com.george.commerce.entity.PasswordResetToken;
 import br.com.george.commerce.entity.User;
-import br.com.george.commerce.exception.UserInactiveException;
-import br.com.george.commerce.exception.UserNotFoundException;
+import br.com.george.commerce.exception.*;
 import br.com.george.commerce.repository.PasswordResetTokenRepository;
 import br.com.george.commerce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,14 +30,14 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse login(LoginRequest request) {
 
-        User user = userRepository.findByEmail(request.email()).orElseThrow(() -> new RuntimeException("Invalid email or password"));
+        User user = userRepository.findByEmail(request.email()).orElseThrow(InvalidCredentialsException::new);
 
         if (!Boolean.TRUE.equals(user.getActive())) {
             throw new UserInactiveException();
         }
 
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
-            throw new RuntimeException("Invalid email or password");
+            throw new InvalidCredentialsException();
         }
 
         String token = jwtService.generateToken(user.getEmail());
@@ -67,14 +66,14 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void resetPassword(ResetPasswordRequest request) {
 
-        PasswordResetToken token = tokenRepository.findByToken(request.token()).orElseThrow(() -> new RuntimeException("Invalid token"));
+        PasswordResetToken token = tokenRepository.findByToken(request.token()).orElseThrow(InvalidPasswordResetTokenException::new);
 
         if (Boolean.TRUE.equals(token.getUsed())) {
-            throw new RuntimeException("Token already used");
+            throw new PasswordResetTokenAlreadyUsedException();
         }
 
         if (token.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Token expired");
+            throw new PasswordResetTokenExpiredException();
         }
 
         User user = token.getUser();

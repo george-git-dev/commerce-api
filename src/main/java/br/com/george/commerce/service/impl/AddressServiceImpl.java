@@ -26,15 +26,6 @@ public class AddressServiceImpl implements AddressService {
     private final JwtService jwtService;
 
     @Override
-    public List<AddressResponse> findAll() {
-
-        return repository.findAll()
-                .stream()
-                .map(mapper::toResponse)
-                .toList();
-    }
-
-    @Override
     public AddressResponse findById(Long id) {
         Address address = repository.findById(id).orElseThrow(() -> new AddressNotFoundException(id));
         return mapper.toResponse(address);
@@ -43,10 +34,12 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public AddressResponse save(CreateAddressRequest request) {
 
-        User user = userRepository.findById(request.userId()).orElseThrow(() -> new UserNotFoundException(request.userId()));
+        String email = jwtService.getCurrentUserEmail();
+
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
 
         if (Boolean.TRUE.equals(request.primaryAddress())) {
-            List<Address> addresses = repository.findByUserId(request.userId());
+            List<Address> addresses = repository.findByUserId(user.getId());
             addresses.forEach(address -> address.setPrimaryAddress(false));
             repository.saveAll(addresses);
         }
@@ -73,11 +66,17 @@ public class AddressServiceImpl implements AddressService {
 
         Address address = repository.findById(id).orElseThrow(() -> new AddressNotFoundException(id));
 
-        User user = userRepository.findById(request.userId()).orElseThrow(() -> new UserNotFoundException(request.userId()));
+        String email = jwtService.getCurrentUserEmail();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
+
+        if (!address.getUser().getId().equals(user.getId())) {
+            throw new AddressNotFoundException(id);
+        }
 
         if (Boolean.TRUE.equals(request.primaryAddress())) {
-            List<Address> addresses = repository.findByUserId(request.userId());
-
+            List<Address> addresses = repository.findByUserId(user.getId());
             addresses.forEach(existingAddress -> {
                 if (!existingAddress.getId().equals(id)) {
                     existingAddress.setPrimaryAddress(false);
@@ -94,7 +93,6 @@ public class AddressServiceImpl implements AddressService {
         address.setState(request.state());
         address.setZipCode(request.zipCode());
         address.setPrimaryAddress(request.primaryAddress());
-        address.setUser(user);
 
         address = repository.save(address);
 
@@ -104,13 +102,20 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public void delete(Long id) {
         Address address = repository.findById(id).orElseThrow(() -> new AddressNotFoundException(id));
+
+        String email = jwtService.getCurrentUserEmail();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+
+        if (!address.getUser().getId().equals(user.getId())) {
+            throw new AddressNotFoundException(id);
+        }
         repository.delete(address);
     }
 
     @Override
     public List<AddressResponse> myAddresses() {
         String email = jwtService.getCurrentUserEmail();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
 
         return repository.findByUserId(user.getId())
                 .stream()

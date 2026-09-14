@@ -2,6 +2,11 @@ package br.com.george.commerce.service.impl;
 
 import br.com.george.commerce.dto.product.CreateProductRequest;
 import br.com.george.commerce.dto.product.ProductResponse;
+import br.com.george.commerce.dto.report.inventory.BrandInventoryStatsResponse;
+import br.com.george.commerce.dto.report.inventory.CategoryInventoryStatsResponse;
+import br.com.george.commerce.dto.report.inventory.InventoryFilterRequest;
+import br.com.george.commerce.dto.report.inventory.InventoryProductResponse;
+import br.com.george.commerce.dto.report.inventory.InventorySummaryResponse;
 import br.com.george.commerce.entity.*;
 import br.com.george.commerce.enums.DiscountType;
 import br.com.george.commerce.exception.BrandNotFoundException;
@@ -20,8 +25,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -176,6 +183,119 @@ public class ProductServiceImpl implements ProductService {
                 finalPrice,
                 promotionActive
         );
+    }
+
+    @Override
+    public List<InventoryProductResponse> findInventoryProducts(InventoryFilterRequest request) {
+
+        List<Product> products = repository.findAll();
+
+        if (request.name() != null && !request.name().isBlank()) {
+
+            products = products.stream()
+                    .filter(product ->
+                            product.getName()
+                                    .toLowerCase()
+                                    .contains(request.name().toLowerCase()))
+                    .toList();
+        }
+
+        if (request.categoryId() != null) {
+
+            products = products.stream()
+                    .filter(product ->
+                            product.getCategory() != null
+                                    && product.getCategory().getId().equals(request.categoryId()))
+                    .toList();
+        }
+
+        if (request.brandId() != null) {
+
+            products = products.stream()
+                    .filter(product ->
+                            product.getBrand() != null
+                                    && product.getBrand().getId().equals(request.brandId()))
+                    .toList();
+        }
+
+        if (request.active() != null) {
+
+            products = products.stream()
+                    .filter(product ->
+                            product.getActive().equals(request.active()))
+                    .toList();
+        }
+
+        if (Boolean.TRUE.equals(request.outOfStock())) {
+
+            products = products.stream()
+                    .filter(product -> product.getStock() <= 0)
+                    .toList();
+        }
+
+        return products.stream()
+                .map(product -> new InventoryProductResponse(
+                        product.getId(),
+                        product.getName(),
+                        product.getCategory().getName(),
+                        product.getBrand().getName(),
+                        product.getStock(),
+                        product.getActive()
+                ))
+                .toList();
+    }
+
+    @Override
+    public InventorySummaryResponse getInventorySummary() {
+
+        List<Product> products = repository.findAll();
+
+        long totalProducts = products.size();
+
+        long activeProducts = products.stream()
+                .filter(Product::getActive)
+                .count();
+
+        long inactiveProducts = products.stream()
+                .filter(product -> !product.getActive())
+                .count();
+
+        long outOfStockProducts = products.stream()
+                .filter(product -> product.getStock() <= 0)
+                .count();
+
+        return new InventorySummaryResponse(
+                totalProducts,
+                activeProducts,
+                inactiveProducts,
+                outOfStockProducts
+        );
+    }
+
+    @Override
+    public List<CategoryInventoryStatsResponse> getCategoryStatistics() {
+
+        return repository.findAll()
+                .stream()
+                .collect(Collectors.groupingBy(product -> product.getCategory().getName()))
+                .entrySet()
+                .stream()
+                .map(entry -> new CategoryInventoryStatsResponse(entry.getKey(), (long) entry.getValue().size()))
+                .sorted(Comparator.comparing(CategoryInventoryStatsResponse::totalProducts).reversed())
+                .toList();
+    }
+
+    @Override
+    public List<BrandInventoryStatsResponse> getBrandStatistics() {
+
+        return repository.findAll()
+                .stream()
+                .collect(Collectors.groupingBy(product -> product.getBrand().getName()))
+                .entrySet()
+                .stream()
+                .map(entry -> new BrandInventoryStatsResponse(entry.getKey(), (long) entry.getValue().size()))
+                .sorted(Comparator.comparing(BrandInventoryStatsResponse::totalProducts).reversed())
+                .toList();
     }
 
 }

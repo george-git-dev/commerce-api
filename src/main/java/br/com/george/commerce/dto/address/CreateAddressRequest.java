@@ -26,10 +26,7 @@ public record CreateAddressRequest(
         String zipCode,
 
         @NotNull(message = "Primary address is required")
-        Boolean primaryAddress,
-
-        @NotNull(message = "User is required")
-        Long userId
+        Boolean primaryAddress
 
 ) {
 }

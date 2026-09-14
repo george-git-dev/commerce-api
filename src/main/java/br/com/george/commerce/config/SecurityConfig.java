@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -15,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -42,63 +44,31 @@ public class SecurityConfig {
                         )
                         .permitAll()
 
-                        // Produtos
                         .requestMatchers(
-                                HttpMethod.POST,
-                                "/products"
+                                "/v3/api-docs/**",
+                                "/v3/api-docs.yaml",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
                         )
-                        .hasAnyRole(
-                                "ADMIN",
-                                "SUPER_ADMIN"
-                        )
+                        .permitAll()
 
-                        .requestMatchers(
-                                HttpMethod.PUT,
-                                "/products/*"
-                        )
-                        .hasAnyRole(
-                                "ADMIN",
-                                "SUPER_ADMIN"
-                        )
-
-                        .requestMatchers(
-                                HttpMethod.DELETE,
-                                "/products/*"
-                        )
-                        .hasRole("SUPER_ADMIN")
-
-                        // Usuários
+                        // Catálogo público (somente leitura):
+                        // visitante navega sem autenticar.
                         .requestMatchers(
                                 HttpMethod.GET,
-                                "/users"
+                                "/products",
+                                "/products/**",
+                                "/categories",
+                                "/categories/**",
+                                "/brands",
+                                "/brands/**",
+                                "/promotions",
+                                "/promotions/**"
                         )
-                        .hasAnyRole(
-                                "VIEWER",
-                                "ADMIN",
-                                "SUPER_ADMIN"
-                        )
+                        .permitAll()
 
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/users/*"
-                        )
-                        .hasAnyRole(
-                                "VIEWER",
-                                "ADMIN",
-                                "SUPER_ADMIN"
-                        )
-
-                        .requestMatchers(
-                                HttpMethod.DELETE,
-                                "/users/*"
-                        )
-                        .hasRole("SUPER_ADMIN")
-
-                        .requestMatchers(
-                                HttpMethod.PATCH,
-                                "/users/*/role"
-                        )
-                        .hasRole("SUPER_ADMIN")
+                        // As demais autorizações por endpoint vivem nos
+                        // controllers, via @PreAuthorize (@EnableMethodSecurity).
 
                         .anyRequest()
                         .authenticated()

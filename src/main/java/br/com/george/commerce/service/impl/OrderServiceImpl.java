@@ -5,6 +5,7 @@ import br.com.george.commerce.dto.order.OrderResponse;
 import br.com.george.commerce.dto.order.UpdateOrderStatusRequest;
 import br.com.george.commerce.entity.*;
 import br.com.george.commerce.enums.OrderStatus;
+import br.com.george.commerce.enums.SaleChannel;
 import br.com.george.commerce.exception.*;
 import br.com.george.commerce.mapper.OrderMapper;
 import br.com.george.commerce.repository.*;
@@ -37,7 +38,6 @@ public class OrderServiceImpl implements OrderService {
     private final AffiliateRepository affiliateRepository;
     private final AffiliateSaleRepository affiliateSaleRepository;
 
-    @Override
     @Transactional
     public OrderResponse checkout(Long userId, CreateOrderRequest request) {
 
@@ -68,6 +68,7 @@ public class OrderServiceImpl implements OrderService {
                 .couponCode(cart.getCouponCode())
                 .discountApplied(discountApplied)
                 .createdAt(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")))
+                .saleChannel(SaleChannel.ONLINE)
                 .build();
 
         for (CartItem cartItem : cart.getItems()) {
@@ -93,6 +94,8 @@ public class OrderServiceImpl implements OrderService {
                             .productPrice(cartItem.getProduct().getPrice())
                             .quantity(cartItem.getQuantity())
                             .subtotal(subtotal)
+                            .categoryName(cartItem.getProduct().getCategory().getName())
+                            .brandName(cartItem.getProduct().getBrand().getName())
                             .build();
                 })
                 .toList();
@@ -138,14 +141,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponse> findByUser(Long userId) {
-        return orderRepository.findByUserId(userId)
-                .stream()
-                .map(mapper::toResponse)
-                .toList();
-    }
-
-    @Override
     public OrderResponse updateStatus(Long orderId, UpdateOrderStatusRequest request) {
 
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException(orderId));
@@ -186,6 +181,13 @@ public class OrderServiceImpl implements OrderService {
                 .stream()
                 .map(mapper::toResponse)
                 .toList();
+    }
+
+    @Override
+    public OrderResponse checkout(CreateOrderRequest request) {
+        String email = jwtService.getCurrentUserEmail();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        return checkout(user.getId(), request);
     }
 
 }

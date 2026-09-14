@@ -62,6 +62,8 @@ public class ManualSaleServiceImpl implements ManualSaleService {
                             .productPrice(itemRequest.unitPrice())
                             .quantity(itemRequest.quantity())
                             .subtotal(subtotal)
+                            .categoryName(product.getCategory().getName())
+                            .brandName(product.getBrand().getName())
                             .build();
                 })
                 .toList();

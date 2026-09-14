@@ -1,0 +1,2239 @@
+openapi: 3.1.0
+info:
+  title: Commerce API
+  description: "REST API para gestao de operacoes de comercio: catalogo, carrinho,\
+    \ pedidos, pagamentos e relatorios."
+  contact:
+    name: Equipe Commerce API
+    url: https://empresa.com/commerce-api
+    email: commerce-api@empresa.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: "1.0"
+externalDocs:
+  description: Guia funcional e regras de negocio
+  url: https://empresa.com/docs/commerce
+servers:
+- url: http://localhost:8080
+  description: Ambiente local
+- url: https://api-dev.empresa.com
+  description: Ambiente de desenvolvimento
+security:
+- bearerAuth: []
+tags:
+- name: Administração - Inventário
+  description: Estoque e indicadores de inventário.
+- name: Área do Cliente - Endereços
+  description: Endereços cadastrados pelo usuário autenticado.
+- name: Área do Cliente - Minha Conta
+  description: "Dados da conta, alteração de senha e e-mail."
+- name: Área do Cliente - Carrinho
+  description: Carrinho de compras do usuário autenticado.
+- name: Público - Autenticação
+  description: "Login, recuperação e redefinição de senha."
+- name: Administração - Usuários
+  description: Gestão administrativa de usuários e permissões.
+- name: Administração - Relatórios de Vendas
+  description: Indicadores e métricas de vendas.
+- name: Público - Catálogo
+  description: "Consulta de produtos, categorias, marcas e promoções."
+- name: Administração - Afiliados
+  description: Operações administrativas relacionadas a afiliados.
+- name: Administração - Relatórios de Clientes
+  description: Indicadores e estatísticas de clientes.
+- name: Administração - Relatórios Financeiros
+  description: Indicadores financeiros consolidados.
+- name: Administração - Financeiro
+  description: Resumo financeiro e indicadores.
+- name: Administração - Pedidos
+  description: Consulta e gerenciamento administrativo de pedidos.
+- name: Público - Cadastro
+  description: Cadastro de novos usuários na plataforma.
+- name: Administração - Despesas
+  description: Cadastro e manutenção de despesas.
+- name: Administração - Relatórios de Afiliados
+  description: Rankings e estatísticas de afiliados.
+- name: Administração - Pagamentos
+  description: Aprovação e rejeição de pagamentos.
+- name: Área do Cliente - Afiliado
+  description: "Área do afiliado autenticado, vendas e comissões."
+- name: Administração - Catálogo
+  description: "Cadastro, atualização e exclusão de produtos, categorias, marcas e\
+    \ promoções."
+- name: Área do Cliente - Pedidos
+  description: Pedidos realizados pelo usuário autenticado e checkout.
+- name: Administração - Venda Manual
+  description: Registro de vendas realizadas manualmente.
+paths:
+  /users/{id}:
+    get:
+      tags:
+      - Administração - Usuários
+      operationId: findById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+    put:
+      tags:
+      - Administração - Usuários
+      operationId: update
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+    delete:
+      tags:
+      - Administração - Usuários
+      operationId: delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+  /promotions/{id}:
+    get:
+      tags:
+      - Público - Catálogo
+      summary: Consultar promoção por ID
+      operationId: findById_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PromotionResponse"
+    put:
+      tags:
+      - Administração - Catálogo
+      summary: Atualizar promoção
+      operationId: update_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePromotionRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PromotionResponse"
+    delete:
+      tags:
+      - Administração - Catálogo
+      summary: Excluir promoção
+      operationId: delete_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+  /products/{id}:
+    get:
+      tags:
+      - Público - Catálogo
+      summary: Consultar produto por ID
+      operationId: findById_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+    put:
+      tags:
+      - Administração - Catálogo
+      summary: Atualizar produto
+      operationId: update_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProductRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+    delete:
+      tags:
+      - Administração - Catálogo
+      summary: Excluir produto
+      operationId: delete_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+  /me/addresses/{id}:
+    put:
+      tags:
+      - Área do Cliente - Endereços
+      operationId: updateAddress
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAddressRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AddressResponse"
+    delete:
+      tags:
+      - Área do Cliente - Endereços
+      operationId: deleteAddress
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+  /expenses/{id}:
+    get:
+      tags:
+      - Administração - Despesas
+      operationId: findById_3
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ExpenseResponse"
+    put:
+      tags:
+      - Administração - Despesas
+      operationId: update_3
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateExpenseRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ExpenseResponse"
+    delete:
+      tags:
+      - Administração - Despesas
+      operationId: delete_3
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+  /categories/{id}:
+    get:
+      tags:
+      - Público - Catálogo
+      summary: Consultar categoria por ID
+      operationId: findById_4
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CategoryResponse"
+    put:
+      tags:
+      - Administração - Catálogo
+      summary: Atualizar categoria
+      operationId: update_4
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCategoryRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CategoryResponse"
+    delete:
+      tags:
+      - Administração - Catálogo
+      summary: Excluir categoria
+      operationId: delete_4
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+  /brands/{id}:
+    get:
+      tags:
+      - Público - Catálogo
+      summary: Consultar marca por ID
+      operationId: findById_5
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BrandResponse"
+    put:
+      tags:
+      - Administração - Catálogo
+      summary: Atualizar marca
+      operationId: update_5
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBrandRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BrandResponse"
+    delete:
+      tags:
+      - Administração - Catálogo
+      summary: Excluir marca
+      operationId: delete_5
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+  /users:
+    get:
+      tags:
+      - Administração - Usuários
+      operationId: findAll
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserResponse"
+    post:
+      tags:
+      - Público - Cadastro
+      summary: Cadastrar usuário
+      operationId: save
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+  /reports/sales:
+    post:
+      tags:
+      - Administração - Relatórios de Vendas
+      operationId: summary
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SalesReportRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SalesSummaryResponse"
+  /reports/sales/top-products:
+    post:
+      tags:
+      - Administração - Relatórios de Vendas
+      operationId: topProducts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SalesReportRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TopProductResponse"
+  /reports/sales/top-categories:
+    post:
+      tags:
+      - Administração - Relatórios de Vendas
+      operationId: topCategories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SalesReportRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TopCategoryResponse"
+  /reports/sales/top-brands:
+    post:
+      tags:
+      - Administração - Relatórios de Vendas
+      operationId: topBrands
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SalesReportRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TopBrandResponse"
+  /reports/affiliates/ranking:
+    post:
+      tags:
+      - Administração - Relatórios de Afiliados
+      operationId: ranking
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SalesReportRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AffiliateRankingResponse"
+  /promotions:
+    get:
+      tags:
+      - Público - Catálogo
+      summary: Listar promoções
+      operationId: findAll_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PromotionResponse"
+    post:
+      tags:
+      - Administração - Catálogo
+      summary: Cadastrar promoção
+      operationId: save_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePromotionRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PromotionResponse"
+  /promotions/link-product:
+    post:
+      tags:
+      - Administração - Catálogo
+      summary: Vincular promoção a produto
+      operationId: linkToProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkPromotionToProductRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /products:
+    get:
+      tags:
+      - Público - Catálogo
+      summary: Listar produtos
+      operationId: findAll_2
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProductResponse"
+    post:
+      tags:
+      - Administração - Catálogo
+      summary: Cadastrar produto
+      operationId: save_2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProductRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+  /orders/{orderId}/payment:
+    get:
+      tags:
+      - Administração - Pagamentos
+      operationId: findByOrder
+      parameters:
+      - name: orderId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaymentResponse"
+    post:
+      tags:
+      - Administração - Pagamentos
+      operationId: createPayment
+      parameters:
+      - name: orderId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePaymentRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaymentResponse"
+  /me/orders/checkout:
+    post:
+      tags:
+      - Área do Cliente - Pedidos
+      operationId: checkout
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrderRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/OrderResponse"
+  /me/cart/items:
+    post:
+      tags:
+      - Área do Cliente - Carrinho
+      operationId: addItem
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCartItemRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CartResponse"
+  /me/cart/coupon:
+    post:
+      tags:
+      - Área do Cliente - Carrinho
+      operationId: applyCoupon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplyCouponRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /me/addresses:
+    get:
+      tags:
+      - Área do Cliente - Endereços
+      operationId: myAddresses
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AddressResponse"
+    post:
+      tags:
+      - Área do Cliente - Endereços
+      operationId: saveAddress
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAddressRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AddressResponse"
+  /manual-sales:
+    post:
+      tags:
+      - Administração - Venda Manual
+      operationId: createSale
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ManualSaleRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/OrderResponse"
+  /inventory/products:
+    post:
+      tags:
+      - Administração - Inventário
+      operationId: findProducts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InventoryFilterRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InventoryProductResponse"
+  /financial/summary:
+    post:
+      tags:
+      - Administração - Financeiro
+      operationId: summary_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FinancialSummaryRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/FinancialSummaryResponse"
+  /expenses:
+    get:
+      tags:
+      - Administração - Despesas
+      operationId: findAll_3
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ExpenseResponse"
+    post:
+      tags:
+      - Administração - Despesas
+      operationId: save_3
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateExpenseRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ExpenseResponse"
+  /categories:
+    get:
+      tags:
+      - Público - Catálogo
+      summary: Listar categorias
+      operationId: findAll_4
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CategoryResponse"
+    post:
+      tags:
+      - Administração - Catálogo
+      summary: Cadastrar categoria
+      operationId: save_4
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCategoryRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CategoryResponse"
+  /brands:
+    get:
+      tags:
+      - Público - Catálogo
+      summary: Listar marcas
+      operationId: findAll_5
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BrandResponse"
+    post:
+      tags:
+      - Administração - Catálogo
+      summary: Cadastrar marca
+      operationId: save_5
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBrandRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BrandResponse"
+  /auth/reset-password:
+    post:
+      tags:
+      - Público - Autenticação
+      operationId: resetPassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /auth/login:
+    post:
+      tags:
+      - Público - Autenticação
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+  /auth/forgot-password:
+    post:
+      tags:
+      - Público - Autenticação
+      operationId: forgotPassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /affiliates/me:
+    get:
+      tags:
+      - Área do Cliente - Afiliado
+      operationId: myAffiliate
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MyAffiliateResponse"
+    post:
+      tags:
+      - Área do Cliente - Afiliado
+      operationId: becomeAffiliate
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AffiliateResponse"
+  /affiliates/me/summary:
+    post:
+      tags:
+      - Área do Cliente - Afiliado
+      operationId: mySummary
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AffiliateReportRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AffiliateSummaryResponse"
+  /users/{id}/role:
+    patch:
+      tags:
+      - Administração - Usuários
+      operationId: updateRole
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRoleRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+  /payments/{paymentId}/reject:
+    patch:
+      tags:
+      - Administração - Pagamentos
+      operationId: rejectPayment
+      parameters:
+      - name: paymentId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaymentResponse"
+  /payments/{paymentId}/approve:
+    patch:
+      tags:
+      - Administração - Pagamentos
+      operationId: approvePayment
+      parameters:
+      - name: paymentId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaymentResponse"
+  /orders/{orderId}/status:
+    patch:
+      tags:
+      - Administração - Pedidos
+      operationId: updateStatus
+      parameters:
+      - name: orderId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateOrderStatusRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/OrderResponse"
+  /me/password:
+    patch:
+      tags:
+      - Área do Cliente - Minha Conta
+      operationId: changePassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /me/email:
+    patch:
+      tags:
+      - Área do Cliente - Minha Conta
+      operationId: changeEmail
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeEmailRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /me/cart/items/{itemId}:
+    delete:
+      tags:
+      - Área do Cliente - Carrinho
+      operationId: removeItem
+      parameters:
+      - name: itemId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+      - Área do Cliente - Carrinho
+      operationId: updateItemQuantity
+      parameters:
+      - name: itemId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCartItemRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CartResponse"
+  /affiliates/sales/{saleId}/pay:
+    patch:
+      tags:
+      - Administração - Afiliados
+      operationId: markAsPaid
+      parameters:
+      - name: saleId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+  /reports/financial/expenses/categories:
+    get:
+      tags:
+      - Administração - Relatórios Financeiros
+      operationId: getExpenseCategoryStatistics
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ExpenseCategoryStatsResponse"
+  /reports/customers:
+    get:
+      tags:
+      - Administração - Relatórios de Clientes
+      operationId: getCustomerStatistics
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CustomerStatsResponse"
+  /orders/{orderId}:
+    get:
+      tags:
+      - Administração - Pedidos
+      operationId: findById_6
+      parameters:
+      - name: orderId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/OrderResponse"
+  /me:
+    get:
+      tags:
+      - Área do Cliente - Minha Conta
+      operationId: user
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+  /me/orders:
+    get:
+      tags:
+      - Área do Cliente - Pedidos
+      operationId: myOrders
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OrderResponse"
+  /me/cart:
+    get:
+      tags:
+      - Área do Cliente - Carrinho
+      operationId: myCart
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CartResponse"
+    delete:
+      tags:
+      - Área do Cliente - Carrinho
+      operationId: clearCart
+      responses:
+        "200":
+          description: OK
+  /inventory/summary:
+    get:
+      tags:
+      - Administração - Inventário
+      operationId: getSummary
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/InventorySummaryResponse"
+  /inventory/statistics/categories:
+    get:
+      tags:
+      - Administração - Inventário
+      operationId: getCategoryStatistics
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CategoryInventoryStatsResponse"
+  /inventory/statistics/brands:
+    get:
+      tags:
+      - Administração - Inventário
+      operationId: getBrandStatistics
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BrandInventoryStatsResponse"
+  /affiliates/me/sales:
+    get:
+      tags:
+      - Área do Cliente - Afiliado
+      operationId: mySales
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AffiliateSaleResponse"
+components:
+  schemas:
+    CreateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        cpf:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          format: email
+          minLength: 1
+        password:
+          type: string
+          minLength: 1
+      required:
+      - cpf
+      - email
+      - name
+      - password
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        cpf:
+          type: string
+        email:
+          type: string
+        active:
+          type: boolean
+        role:
+          type: string
+          enum:
+          - ROLE_SUPER_ADMIN
+          - ROLE_ADMIN
+          - ROLE_VIEWER
+          - ROLE_CUSTOMER
+    CreatePromotionRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        active:
+          type: boolean
+        discountType:
+          type: string
+          enum:
+          - PERCENTAGE
+          - FIXED_VALUE
+        discountValue:
+          type: number
+        startAt:
+          type: string
+          format: date-time
+        endAt:
+          type: string
+          format: date-time
+    PromotionResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        active:
+          type: boolean
+        discountType:
+          type: string
+          enum:
+          - PERCENTAGE
+          - FIXED_VALUE
+        discountValue:
+          type: number
+        startAt:
+          type: string
+          format: date-time
+        endAt:
+          type: string
+          format: date-time
+    CreateProductAttributeRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+    CreateProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+          minLength: 1
+        price:
+          type: number
+        stock:
+          type: integer
+          format: int32
+        active:
+          type: boolean
+        categoryId:
+          type: integer
+          format: int64
+        brandId:
+          type: integer
+          format: int64
+        attributes:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateProductAttributeRequest"
+      required:
+      - active
+      - brandId
+      - categoryId
+      - description
+      - name
+      - price
+      - stock
+    ProductAttributeResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+    ProductResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        stock:
+          type: integer
+          format: int32
+        active:
+          type: boolean
+        categoryId:
+          type: integer
+          format: int64
+        categoryName:
+          type: string
+        brandId:
+          type: integer
+          format: int64
+        brandName:
+          type: string
+        attributes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductAttributeResponse"
+        finalPrice:
+          type: number
+        promotionActive:
+          type: boolean
+    CreateAddressRequest:
+      type: object
+      properties:
+        street:
+          type: string
+          minLength: 1
+        number:
+          type: string
+          minLength: 1
+        complement:
+          type: string
+        neighborhood:
+          type: string
+          minLength: 1
+        city:
+          type: string
+          minLength: 1
+        state:
+          type: string
+          minLength: 1
+        zipCode:
+          type: string
+          minLength: 1
+        primaryAddress:
+          type: boolean
+      required:
+      - city
+      - neighborhood
+      - number
+      - primaryAddress
+      - state
+      - street
+      - zipCode
+    AddressResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        street:
+          type: string
+        number:
+          type: string
+        complement:
+          type: string
+        neighborhood:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        primaryAddress:
+          type: boolean
+        userId:
+          type: integer
+          format: int64
+        userName:
+          type: string
+    CreateExpenseRequest:
+      type: object
+      properties:
+        description:
+          type: string
+        amount:
+          type: number
+        category:
+          type: string
+          enum:
+          - COMPRA_PRODUTOS
+          - MARKETING
+          - EMBALAGENS
+          - INFRAESTRUTURA
+          - FRETE
+          - IMPOSTOS
+          - OUTROS
+        expenseDate:
+          type: string
+          format: date
+    ExpenseResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        description:
+          type: string
+        amount:
+          type: number
+        category:
+          type: string
+          enum:
+          - COMPRA_PRODUTOS
+          - MARKETING
+          - EMBALAGENS
+          - INFRAESTRUTURA
+          - FRETE
+          - IMPOSTOS
+          - OUTROS
+        expenseDate:
+          type: string
+          format: date
+    CreateCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        active:
+          type: boolean
+      required:
+      - active
+      - name
+    CategoryResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        active:
+          type: boolean
+    CreateBrandRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        active:
+          type: boolean
+      required:
+      - active
+      - name
+    BrandResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        active:
+          type: boolean
+    SalesReportRequest:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        saleChannel:
+          type: string
+          enum:
+          - ONLINE
+          - MANUAL
+    SalesSummaryResponse:
+      type: object
+      properties:
+        totalSales:
+          type: integer
+          format: int64
+        onlineSales:
+          type: integer
+          format: int64
+        manualSales:
+          type: integer
+          format: int64
+        totalRevenue:
+          type: number
+        onlineRevenue:
+          type: number
+        manualRevenue:
+          type: number
+        averageTicket:
+          type: number
+    TopProductResponse:
+      type: object
+      properties:
+        productName:
+          type: string
+        quantitySold:
+          type: integer
+          format: int64
+        revenue:
+          type: number
+    TopCategoryResponse:
+      type: object
+      properties:
+        categoryName:
+          type: string
+        quantitySold:
+          type: integer
+          format: int64
+        revenue:
+          type: number
+    TopBrandResponse:
+      type: object
+      properties:
+        brandName:
+          type: string
+        quantitySold:
+          type: integer
+          format: int64
+        revenue:
+          type: number
+    AffiliateRankingResponse:
+      type: object
+      properties:
+        affiliateId:
+          type: integer
+          format: int64
+        affiliateName:
+          type: string
+        totalSales:
+          type: integer
+          format: int64
+        totalRevenue:
+          type: number
+        totalCommission:
+          type: number
+    LinkPromotionToProductRequest:
+      type: object
+      properties:
+        productId:
+          type: integer
+          format: int64
+        promotionId:
+          type: integer
+          format: int64
+    CreatePaymentRequest:
+      type: object
+      properties:
+        method:
+          type: string
+          enum:
+          - PIX
+          - CARTAO_CREDITO
+          - BOLETO
+      required:
+      - method
+    PaymentResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        orderId:
+          type: integer
+          format: int64
+        amount:
+          type: number
+        method:
+          type: string
+          enum:
+          - PIX
+          - CARTAO_CREDITO
+          - BOLETO
+        status:
+          type: string
+          enum:
+          - PENDENTE
+          - APROVADO
+          - RECUSADO
+        createdAt:
+          type: string
+          format: date-time
+    CreateOrderRequest:
+      type: object
+      properties:
+        addressId:
+          type: integer
+          format: int64
+      required:
+      - addressId
+    OrderItemResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        productName:
+          type: string
+        productPrice:
+          type: number
+        quantity:
+          type: integer
+          format: int32
+        subtotal:
+          type: number
+    OrderResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userId:
+          type: integer
+          format: int64
+        userName:
+          type: string
+        addressId:
+          type: integer
+          format: int64
+        total:
+          type: number
+        status:
+          type: string
+          enum:
+          - PENDENTE
+          - PAGO
+          - ENVIADO
+          - ENTREGUE
+          - CANCELADO
+        createdAt:
+          type: string
+          format: date-time
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItemResponse"
+    CreateCartItemRequest:
+      type: object
+      properties:
+        productId:
+          type: integer
+          format: int64
+        quantity:
+          type: integer
+          format: int32
+      required:
+      - productId
+      - quantity
+    CartItemResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        productId:
+          type: integer
+          format: int64
+        productName:
+          type: string
+        productPrice:
+          type: number
+        quantity:
+          type: integer
+          format: int32
+    CartResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userId:
+          type: integer
+          format: int64
+        userName:
+          type: string
+        total:
+          type: number
+        couponCode:
+          type: string
+        discountApplied:
+          type: number
+        totalWithDiscount:
+          type: number
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CartItemResponse"
+    ApplyCouponRequest:
+      type: object
+      properties:
+        couponCode:
+          type: string
+    ManualSaleItemRequest:
+      type: object
+      properties:
+        productId:
+          type: integer
+          format: int64
+        quantity:
+          type: integer
+          format: int32
+        unitPrice:
+          type: number
+    ManualSaleRequest:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ManualSaleItemRequest"
+        notes:
+          type: string
+    InventoryFilterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        categoryId:
+          type: integer
+          format: int64
+        brandId:
+          type: integer
+          format: int64
+        active:
+          type: boolean
+        outOfStock:
+          type: boolean
+    InventoryProductResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        categoryName:
+          type: string
+        brandName:
+          type: string
+        stock:
+          type: integer
+          format: int32
+        active:
+          type: boolean
+    FinancialSummaryRequest:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        saleChannel:
+          type: string
+          enum:
+          - ONLINE
+          - MANUAL
+        expenseCategory:
+          type: string
+          enum:
+          - COMPRA_PRODUTOS
+          - MARKETING
+          - EMBALAGENS
+          - INFRAESTRUTURA
+          - FRETE
+          - IMPOSTOS
+          - OUTROS
+        includeAffiliateCommissions:
+          type: boolean
+    FinancialSummaryResponse:
+      type: object
+      properties:
+        totalRevenue:
+          type: number
+        onlineRevenue:
+          type: number
+        manualRevenue:
+          type: number
+        totalExpenses:
+          type: number
+        affiliateCommissions:
+          type: number
+        resultadoBruto:
+          type: number
+        resultadoLiquido:
+          type: number
+    ResetPasswordRequest:
+      type: object
+      properties:
+        token:
+          type: string
+          minLength: 1
+        newPassword:
+          type: string
+          minLength: 1
+      required:
+      - newPassword
+      - token
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+        password:
+          type: string
+          minLength: 1
+      required:
+      - email
+      - password
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+    ForgotPasswordRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+      required:
+      - email
+    AffiliateResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userId:
+          type: integer
+          format: int64
+        userName:
+          type: string
+        couponCode:
+          type: string
+        active:
+          type: boolean
+        commissionPercentage:
+          type: number
+        discountType:
+          type: string
+          enum:
+          - PERCENTAGE
+          - FIXED_VALUE
+        discountValue:
+          type: number
+    AffiliateReportRequest:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+    AffiliateSummaryResponse:
+      type: object
+      properties:
+        totalSales:
+          type: number
+        totalCommission:
+          type: number
+        pendingCommission:
+          type: number
+        paidCommission:
+          type: number
+    UpdateUserRoleRequest:
+      type: object
+      properties:
+        role:
+          type: string
+          enum:
+          - ROLE_SUPER_ADMIN
+          - ROLE_ADMIN
+          - ROLE_VIEWER
+          - ROLE_CUSTOMER
+    UpdateOrderStatusRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - PENDENTE
+          - PAGO
+          - ENVIADO
+          - ENTREGUE
+          - CANCELADO
+      required:
+      - status
+    ChangePasswordRequest:
+      type: object
+      properties:
+        currentPassword:
+          type: string
+          minLength: 1
+        newPassword:
+          type: string
+          minLength: 1
+      required:
+      - currentPassword
+      - newPassword
+    ChangeEmailRequest:
+      type: object
+      properties:
+        currentEmail:
+          type: string
+          format: email
+          minLength: 1
+        password:
+          type: string
+          minLength: 1
+        newEmail:
+          type: string
+          format: email
+          minLength: 1
+      required:
+      - currentEmail
+      - newEmail
+      - password
+    UpdateCartItemRequest:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          format: int32
+      required:
+      - quantity
+    ExpenseCategoryStatsResponse:
+      type: object
+      properties:
+        categoryName:
+          type: string
+        totalAmount:
+          type: number
+    CustomerStatsResponse:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+        userName:
+          type: string
+        totalOrders:
+          type: integer
+          format: int64
+        totalSpent:
+          type: number
+        lastPurchase:
+          type: string
+          format: date-time
+    InventorySummaryResponse:
+      type: object
+      properties:
+        totalProducts:
+          type: integer
+          format: int64
+        activeProducts:
+          type: integer
+          format: int64
+        inactiveProducts:
+          type: integer
+          format: int64
+        outOfStockProducts:
+          type: integer
+          format: int64
+    CategoryInventoryStatsResponse:
+      type: object
+      properties:
+        categoryName:
+          type: string
+        totalProducts:
+          type: integer
+          format: int64
+    BrandInventoryStatsResponse:
+      type: object
+      properties:
+        brandName:
+          type: string
+        totalProducts:
+          type: integer
+          format: int64
+    MyAffiliateResponse:
+      type: object
+      properties:
+        couponCode:
+          type: string
+        active:
+          type: boolean
+        expiresAt:
+          type: string
+          format: date-time
+    AffiliateSaleResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        affiliateId:
+          type: integer
+          format: int64
+        orderId:
+          type: integer
+          format: int64
+        saleAmount:
+          type: number
+        commissionAmount:
+          type: number
+        paid:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        paidAt:
+          type: string
+          format: date-time
+  securitySchemes:
+    bearerAuth:
+      type: http
+      name: bearerAuth
+      scheme: bearer
+      bearerFormat: JWT

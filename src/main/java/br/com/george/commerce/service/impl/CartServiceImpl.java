@@ -33,24 +33,6 @@ public class CartServiceImpl implements CartService {
     private final JwtService jwtService;
     private final DiscountService discountService;
 
-
-    @Override
-    public CartResponse findByUser(Long userId) {
-        Cart cart = cartRepository.findByUserId(userId).orElseThrow(() -> new CartNotFoundException(userId));
-        CartResponse response = mapper.toResponse(cart);
-
-        return new CartResponse(
-                response.id(),
-                response.userId(),
-                response.userName(),
-                calculateTotal(cart),
-                cart.getCouponCode(),
-                discountService.calculateDiscount(cart),
-                discountService.calculateTotalWithDiscount(cart),
-                response.items()
-        );
-    }
-
     @Override
     public CartResponse addItem(Long userId, CreateCartItemRequest request) {
 
@@ -124,7 +106,7 @@ public class CartServiceImpl implements CartService {
         CartItem item = cartItemRepository.findById(itemId).orElseThrow(() -> new CartItemNotFoundException(itemId));
 
         if (!item.getCart().getId().equals(cart.getId())) {
-            throw new RuntimeException("Item does not belong to cart");
+            throw new CartItemNotBelongToCartException();
         }
 
         cartItemRepository.delete(item);
@@ -239,5 +221,32 @@ public class CartServiceImpl implements CartService {
         cartRepository.save(cart);
     }
 
+    @Override
+    public CartResponse addItem(CreateCartItemRequest request) {
+        String email = jwtService.getCurrentUserEmail();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        return addItem(user.getId(), request);
+    }
+
+    @Override
+    public void removeItem(Long itemId) {
+        String email = jwtService.getCurrentUserEmail();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        removeItem(user.getId(), itemId);
+    }
+
+    @Override
+    public CartResponse updateItemQuantity(Long itemId, UpdateCartItemRequest request) {
+        String email = jwtService.getCurrentUserEmail();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        return updateItemQuantity(user.getId(), itemId, request);
+    }
+
+    @Override
+    public void clearCart() {
+        String email = jwtService.getCurrentUserEmail();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        clearCart(user.getId());
+    }
 
 }

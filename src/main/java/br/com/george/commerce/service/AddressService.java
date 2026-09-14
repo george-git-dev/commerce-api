@@ -7,8 +7,6 @@ import java.util.List;
 
 public interface AddressService {
 
-    List<AddressResponse> findAll();
-
     AddressResponse findById(Long id);
 
     AddressResponse save(CreateAddressRequest request);

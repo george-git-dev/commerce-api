@@ -6,8 +6,6 @@ import br.com.george.commerce.dto.cart.UpdateCartItemRequest;
 
 public interface CartService {
 
-    CartResponse findByUser(Long userId);
-
     CartResponse addItem(Long userId, CreateCartItemRequest request);
 
     void removeItem(Long userId, Long itemId);
@@ -19,4 +17,12 @@ public interface CartService {
     CartResponse myCart();
 
     void applyCoupon(String couponCode);
+
+    CartResponse addItem(CreateCartItemRequest request);
+
+    void removeItem(Long itemId);
+
+    CartResponse updateItemQuantity(Long itemId, UpdateCartItemRequest request);
+
+    void clearCart();
 }

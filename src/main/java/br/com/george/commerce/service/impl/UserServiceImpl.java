@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService {
 
         String email = jwtService.getCurrentUserEmail();
 
-        User user = repository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = repository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
 
         return mapper.toResponse(user);
     }
@@ -129,7 +129,7 @@ public class UserServiceImpl implements UserService {
 
         String email = jwtService.getCurrentUserEmail();
 
-        User user = repository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = repository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
 
         if (!passwordEncoder.matches(request.currentPassword(), user.getPassword())) {
             throw new InvalidPasswordException();
@@ -146,7 +146,7 @@ public class UserServiceImpl implements UserService {
 
         String email = jwtService.getCurrentUserEmail();
 
-        User user = repository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = repository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
 
         if (!user.getEmail().equals(request.currentEmail())) {
             throw new InvalidEmailChangeException("Current email does not match");

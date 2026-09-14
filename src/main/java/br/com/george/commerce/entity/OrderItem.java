@@ -29,4 +29,8 @@ public class OrderItem {
     private Integer quantity;
 
     private BigDecimal subtotal;
+
+    private String categoryName;
+
+    private String brandName;
 }
