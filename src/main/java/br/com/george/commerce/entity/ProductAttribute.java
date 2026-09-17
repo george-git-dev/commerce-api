@@ -18,6 +18,7 @@ public class ProductAttribute {
 
     private String name;
 
+    @Column(name = "attribute_value")
     private String value;
 
     @ManyToOne
