@@ -4,7 +4,7 @@ Este arquivo orienta o Claude Code (claude.ai/code) ao trabalhar com o código d
 
 ## Contexto do projeto
 
-Backend da **Nani Perfums** ("Essência do Oriente"), e-commerce de perfumes começando por perfumes árabes. Meta: MVP funcional até o fim de 2026. O frontend fica em outro repositório (`commerce-web`, Angular 22) e hoje consome dados mockados; a integração com esta API vem depois que o visual fechar.
+Backend da **Nani Perfumes** ("Essência do Oriente"), e-commerce de perfumes começando por perfumes árabes. Meta: MVP funcional até o fim de 2026. O frontend fica em outro repositório (`commerce-web`, Angular 22) e hoje consome dados mockados; a integração com esta API vem depois que o visual fechar.
 
 Cerca de 90% dos clientes vão acessar pelo celular: respostas enxutas (sem campos desnecessários) e endpoints de listagem pensados para rede móvel.
 
@@ -132,4 +132,5 @@ Hoje só existe o teste de contexto (`CommerceApiApplicationTests`). Para códig
 
 - **O Claude nunca executa `git add`, `git commit` nem `git push`** (nem outros comandos que alterem o histórico ou o remoto, como `merge`, `rebase`, `reset` ou `tag`). Essas ações são sempre feitas manualmente pelo dono do projeto. O Claude pode sugerir o comando e a mensagem de commit, mas não executa.
 - Trabalhar sempre na branch `develop`.
+- Ao sugerir comandos git, entregar em uma linha só, encadeados com `&&`, e sempre com `git push origin develop` (nunca só `git push`). Ex.: `git add <arquivos> && git commit -m "mensagem" && git push origin develop`.
 - Nunca adicionar linha de coautoria (`Co-Authored-By: Claude`) nem "Generated with Claude Code" em mensagens de commit ou descrições de PR.
