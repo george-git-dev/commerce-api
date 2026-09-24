@@ -125,7 +125,7 @@ Hoje só existe o teste de contexto (`CommerceApiApplicationTests`). Para códig
 
 - O dono do projeto é dev backend Java/Spring pleno: não precisa simplificar as explicações de backend.
 - Trabalhar em passos pequenos: propor o plano da sessão, esperar aprovação e então dizer exatamente o que fazer (comando, arquivo, conteúdo). Ele aplica e valida antes do próximo passo. Não rodar comandos nem editar arquivos sem ele pedir.
-- Cada sessão começa e termina uma etapa do roadmap.
+- Cada sessão tem um objetivo claro combinado no início (ex.: ajustar uma tela, uma seção ou um comportamento) e termina com ele funcionando e validado. O roadmap (`roadmap-mvp.md`, na área Contexto do projeto) é um guia do que falta, não uma ordem obrigatória.
 - Refatorações de arquitetura ficam para a revisão pós-MVP. Se um atalho for inevitável por causa do prazo, sinalizar explicitamente como **dívida técnica**.
 
 ## Regras de Git
