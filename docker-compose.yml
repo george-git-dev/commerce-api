@@ -1,0 +1,26 @@
+# Banco da commerce-api para DESENVOLVIMENTO (Postgres igual ao de produção).
+# Subir: docker compose up -d   ·   Zerar tudo: docker compose down -v
+# Senhas no .env (copie de .env.example; o .env não vai para o Git).
+services:
+  postgres:
+    image: postgres:17.6-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: commerce
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env}
+      COMMERCE_API_DB_PASSWORD: ${DB_PASSWORD:?defina DB_PASSWORD no .env}
+    # Só na sua máquina (127.0.0.1), numa porta que não briga com outros Postgres.
+    ports:
+      - "127.0.0.1:5435:5432"
+    volumes:
+      - commerce-api-data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d commerce"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  commerce-api-data:

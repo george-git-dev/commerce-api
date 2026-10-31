@@ -20,22 +20,23 @@ Cerca de 90% dos clientes vão acessar pelo celular: respostas enxutas (sem camp
 
 Ambiente: Windows com Git Bash (MINGW64). Usar o Maven Wrapper.
 
-- `./mvnw spring-boot:run`: sobe a API em `http://localhost:8080` com o profile `h2` (padrão)
-- `./mvnw test`: roda os testes
+- `docker compose up -d`: sobe o Postgres de desenvolvimento (porta 5435; senhas no `.env`, copiado de `.env.example`). **Precisa estar no ar** para rodar a API e para o `verify`.
+- `./mvnw spring-boot:run`: sobe a API em `http://localhost:8080` com o profile `dev` (padrão)
+- `./mvnw test`: roda os testes (Postgres num container via Testcontainers: **Docker aberto**)
 - `./mvnw test -Dtest=NomeDaClasseTest`: roda uma classe de teste específica
 - `./mvnw verify`: build completo. Na fase de integration-test, sobe a aplicação na porta 8085 e **regenera `docs/swagger.yaml`**. Rodar sempre que mudar algum endpoint ou DTO.
 - Swagger UI: `http://localhost:8080/swagger-ui.html`
-- Console do H2: `http://localhost:8080/h2-console` (JDBC URL: `jdbc:h2:file:./data/commerce-db`, usuário `sa`, sem senha)
 
 ## Stack
 
-Java 21, Spring Boot 4.1 (Web, Data JPA, Security, Validation), OAuth2 Resource Server (token do Keycloak), Lombok, MapStruct 1.6, springdoc-openapi, H2 (dev) e PostgreSQL (produção).
+Java 21, Spring Boot 4.1 (Web, Data JPA, Security, Validation), OAuth2 Resource Server (token do Keycloak), Lombok, MapStruct 1.6, springdoc-openapi, PostgreSQL 17 (dev, testes e produção) e Flyway.
 
 ## Profiles e banco
 
-- `h2` (padrão, `application-h2.properties`): banco em arquivo (`./data/commerce-db`, ignorado pelo Git). O `data.sql` roda a **cada** restart: limpa as tabelas e insere o seed. Ao criar uma entidade nova, atualizar o `data.sql` (limpeza na ordem filhos → pais e depois os inserts).
-- `postgres` (`application-postgres.properties`): produção, ativado com `SPRING_PROFILES_ACTIVE=postgres`.
-- O schema é gerado pelo Hibernate (`ddl-auto=update`). A adoção do Flyway está planejada; ver "Dívidas técnicas".
+- **Postgres em todo lugar** (dev pelo `docker-compose.yml`, testes pelo Testcontainers, produção). Usuário `commerce_api` só com o schema `commerce_api` (A7).
+- **O banco só muda por migração do Flyway** (`src/main/resources/db/migration`, `V1__...`, `V2__...`). O Hibernate só valida (`ddl-auto=validate`): entidade diferente da tabela = a API nem sobe. **Migração que já rodou nunca é editada** — mudança é sempre uma migração nova. Entidade nova ou campo novo = migração nova no mesmo commit.
+- `dev` (padrão): também roda `db/dev/R__dados_de_desenvolvimento.sql` (dados de teste; repetível: roda de novo quando o arquivo muda e começa com `TRUNCATE`). Ao criar uma tabela nova, incluir no `TRUNCATE` e nos inserts.
+- `prod` (`SPRING_PROFILES_ACTIVE=prod`): só as migrações. Conexão por `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`.
 
 ## Arquitetura
 
@@ -75,7 +76,7 @@ Seguir o padrão do código existente:
 ## Segurança
 
 - API stateless, **resource server do Keycloak** (commerce-auth): aceita só token com emissor = realm da loja e `aud = commerce-api` (`SecurityConfig`). Papéis do realm (`ROLE_*`) e permissões do cliente `commerce-api` viram authorities (`KeycloakJwtAuthenticationConverter`). Login, cadastro, senha, 2 etapas e papéis são do Keycloak — **nada disso existe aqui**. Quem chama é o BFF (sem CORS).
-- Rotas públicas ficam no `SecurityConfig`: `/auth/**`, `POST /users`, `GET` do catálogo (`/products`, `/categories`, `/brands`, `/promotions`), Swagger e console do H2. **O resto exige autenticação.**
+- Rotas públicas ficam no `SecurityConfig`: `GET` do catálogo (`/products`, `/categories`, `/brands`, `/promotions`) e Swagger. **O resto exige autenticação.**
 - Autorização por método com `@PreAuthorize` **em todo endpoint** não público:
   - cliente: `isAuthenticated()`
   - leitura do backoffice: `hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')`
@@ -92,7 +93,7 @@ Hoje só existe o teste de contexto (`CommerceApiApplicationTests`). Para códig
 
 - Testes unitários de service com JUnit 5 + Mockito, cobrindo as regras de negócio e os caminhos de erro.
 - Testes de controller com `@WebMvcTest` + `spring-security-test` quando houver regra de autorização relevante.
-- Queries customizadas (ex.: `decreaseStock`) testadas contra PostgreSQL real com `@SpringBootTest` + Testcontainers (exige Docker), porque o H2 não reproduz fielmente o comportamento do Postgres.
+- Testes de integração com `@SpringBootTest` + `@Import(TestcontainersConfiguration.class)`: Postgres real num container, com as migrações e os dados de teste.
 - Nome dos testes descrevendo o comportamento (`shouldThrowWhenStockIsInsufficient`).
 
 ## Dívidas técnicas conhecidas
@@ -108,7 +109,6 @@ Hoje só existe o teste de contexto (`CommerceApiApplicationTests`). Para códig
 
 - As credenciais do Postgres estão em `application-postgres.properties`: mover para variáveis de ambiente.
 - O CORS está fixo em `http://localhost:4200` (`SecurityConfig`): tornar configurável por ambiente.
-- `ddl-auto=update` no profile de produção: adotar o Flyway (baseline V1 e `ddl-auto=validate`) antes do primeiro deploy.
 - Não há health check: adicionar o Spring Boot Actuator expondo só `/actuator/health` (usado pelo load balancer da AWS).
 - Pool de conexões (HikariCP) com o tamanho padrão: ajustar `maximum-pool-size` ao limite de conexões do banco de produção.
 

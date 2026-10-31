@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import br.com.george.commerce.TestcontainersConfiguration;
 import br.com.george.commerce.repository.UserRepository;
 import br.com.george.commerce.service.security.KeycloakJwtAuthenticationConverter;
 import java.time.Instant;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
@@ -28,7 +30,8 @@ import org.springframework.web.context.WebApplicationContext;
  * A API com o token do Keycloak, sem Keycloak rodando: o MockMvc entrega o token já decodificado
  * e a validação (emissor, aud, validade) é testada direto no validador.
  */
-@SpringBootTest(properties = "spring.datasource.url=jdbc:h2:mem:seguranca;DB_CLOSE_DELAY=-1")
+@SpringBootTest
+@Import(TestcontainersConfiguration.class)
 class KeycloakSecurityIntegrationTest {
 
     private static final String ISSUER = "http://localhost:8180/auth/realms/nani";
@@ -108,7 +111,7 @@ class KeycloakSecurityIntegrationTest {
     @Test
     void firstAccessShouldLinkTheExistingProfileByVerifiedEmail() throws Exception {
         String sub = UUID.randomUUID().toString();
-        // Ana existe no data.sql (sem keycloak_id), com CPF.
+        // Ana existe nos dados de teste (db/dev) (sem keycloak_id), com CPF.
         mvc.perform(get("/me").with(customer(sub, "ana@email.com")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Ana Souza"))

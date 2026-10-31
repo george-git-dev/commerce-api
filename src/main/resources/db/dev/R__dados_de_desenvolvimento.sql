@@ -1,29 +1,11 @@
--- Seed de desenvolvimento local (H2). Roda em TODO restart da aplicação
--- (spring.sql.init.mode=always) — por isso começa limpando as tabelas antes
--- de inserir, pra nunca duplicar dado.
---
--- Sem dados de PROMOÇÃO: essa entidade ainda não existe no backend (só na
--- spec do OpenAPI) — nada pra semear aqui até isso ser implementado.
+-- Dados de teste SÓ DE DESENVOLVIMENTO (profile dev; nunca em produção).
+-- Migração "repetível" do Flyway: roda de novo sempre que este arquivo muda.
+-- Por isso começa zerando tudo — editar aqui recria os dados de teste do zero.
 
--- 1) Limpeza (filhos antes dos pais, por causa das FKs)
-DELETE
-FROM payments;
-DELETE
-FROM order_items;
-DELETE
-FROM orders;
-DELETE
-FROM addresses;
-DELETE
-FROM product_attributes;
-DELETE
-FROM products;
-DELETE
-FROM brands;
-DELETE
-FROM categories;
-DELETE
-FROM users;
+-- 1) Limpeza (TRUNCATE ... CASCADE já respeita as FKs e reinicia os ids)
+TRUNCATE TABLE affiliate_sales, affiliates, payments, order_items, orders, cart_items, carts,
+    product_promotions, promotions, product_attributes, products, brands, categories,
+    addresses, expenses, users RESTART IDENTITY CASCADE;
 
 -- 2) Catálogo
 INSERT INTO categories (name, active)
@@ -83,28 +65,28 @@ VALUES ('Rua das Flores', '123', 'Apto 45', 'Centro', 'São Paulo', 'SP', '01000
         (SELECT id FROM users WHERE email = 'bia@email.com'));
 
 -- 5) Pedidos + itens + pagamentos
--- Pedido 1 — Maria, ENTREGUE, pago via PIX
+-- Pedido 1 — Ana, ENTREGUE, pago via PIX
 INSERT INTO orders (user_id, address_id, total, status, created_at)
 VALUES ((SELECT id FROM users WHERE email = 'ana@email.com'),
         (SELECT id FROM addresses WHERE user_id = (SELECT id FROM users WHERE email = 'ana@email.com')),
-        1049.70, 'ENTREGUE', DATEADD('DAY', -20, NOW()));
+        1049.70, 'ENTREGUE', NOW() - INTERVAL '20 days');
 INSERT INTO order_items (order_id, product_name, product_price, quantity, subtotal)
 VALUES ((SELECT MAX(id) FROM orders), 'Noite de Oud', 389.90, 1, 389.90),
        ((SELECT MAX(id) FROM orders), 'Flor de Damasco', 329.90, 2, 659.80);
 INSERT INTO payments (order_id, amount, method, status, created_at)
-VALUES ((SELECT MAX(id) FROM orders), 1049.70, 'PIX', 'APROVADO', DATEADD('DAY', -20, NOW()));
+VALUES ((SELECT MAX(id) FROM orders), 1049.70, 'PIX', 'APROVADO', NOW() - INTERVAL '20 days');
 
--- Pedido 2 — Maria, PAGO, aguardando envio
+-- Pedido 2 — Ana, PAGO, aguardando envio
 INSERT INTO orders (user_id, address_id, total, status, created_at)
 VALUES ((SELECT id FROM users WHERE email = 'ana@email.com'),
         (SELECT id FROM addresses WHERE user_id = (SELECT id FROM users WHERE email = 'ana@email.com')),
-        459.90, 'PAGO', DATEADD('DAY', -2, NOW()));
+        459.90, 'PAGO', NOW() - INTERVAL '2 days');
 INSERT INTO order_items (order_id, product_name, product_price, quantity, subtotal)
 VALUES ((SELECT MAX(id) FROM orders), 'Couro Nobre', 459.90, 1, 459.90);
 INSERT INTO payments (order_id, amount, method, status, created_at)
-VALUES ((SELECT MAX(id) FROM orders), 459.90, 'CARTAO_CREDITO', 'APROVADO', DATEADD('DAY', -2, NOW()));
+VALUES ((SELECT MAX(id) FROM orders), 459.90, 'CARTAO_CREDITO', 'APROVADO', NOW() - INTERVAL '2 days');
 
--- Pedido 3 — João, PENDENTE, sem pagamento ainda (testar fluxo "aguardando pagamento")
+-- Pedido 3 — Bia, PENDENTE, sem pagamento ainda (testar fluxo "aguardando pagamento")
 INSERT INTO orders (user_id, address_id, total, status, created_at)
 VALUES ((SELECT id FROM users WHERE email = 'bia@email.com'),
         (SELECT id FROM addresses WHERE user_id = (SELECT id FROM users WHERE email = 'bia@email.com')),
@@ -112,12 +94,12 @@ VALUES ((SELECT id FROM users WHERE email = 'bia@email.com'),
 INSERT INTO order_items (order_id, product_name, product_price, quantity, subtotal)
 VALUES ((SELECT MAX(id) FROM orders), 'Vetiver Intenso', 349.90, 1, 349.90);
 
--- Pedido 4 — João, CANCELADO, pagamento recusado via boleto
+-- Pedido 4 — Bia, CANCELADO, pagamento recusado via boleto
 INSERT INTO orders (user_id, address_id, total, status, created_at)
 VALUES ((SELECT id FROM users WHERE email = 'bia@email.com'),
         (SELECT id FROM addresses WHERE user_id = (SELECT id FROM users WHERE email = 'bia@email.com')),
-        399.90, 'CANCELADO', DATEADD('DAY', -10, NOW()));
+        399.90, 'CANCELADO', NOW() - INTERVAL '10 days');
 INSERT INTO order_items (order_id, product_name, product_price, quantity, subtotal)
 VALUES ((SELECT MAX(id) FROM orders), 'Rosa do Deserto', 399.90, 1, 399.90);
 INSERT INTO payments (order_id, amount, method, status, created_at)
-VALUES ((SELECT MAX(id) FROM orders), 399.90, 'BOLETO', 'RECUSADO', DATEADD('DAY', -10, NOW()));
+VALUES ((SELECT MAX(id) FROM orders), 399.90, 'BOLETO', 'RECUSADO', NOW() - INTERVAL '10 days');

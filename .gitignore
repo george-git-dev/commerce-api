@@ -32,7 +32,10 @@ build/
 ### VS Code ###
 .vscode/
 
-### H2 ###
+### Segredos locais ###
+.env
+
+### Banco H2 antigo (não é mais usado) ###
 /data/
 
 Claude outputs/

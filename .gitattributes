@@ -1,2 +1,4 @@
 /mvnw text eol=lf
 *.cmd text eol=crlf
+# Script do Postgres roda no Linux do container: sempre LF.
+*.sh text eol=lf
