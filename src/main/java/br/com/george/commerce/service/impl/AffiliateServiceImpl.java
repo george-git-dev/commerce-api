@@ -12,9 +12,8 @@ import br.com.george.commerce.mapper.AffiliateMapper;
 import br.com.george.commerce.mapper.AffiliateSaleMapper;
 import br.com.george.commerce.repository.AffiliateRepository;
 import br.com.george.commerce.repository.AffiliateSaleRepository;
-import br.com.george.commerce.repository.UserRepository;
 import br.com.george.commerce.service.AffiliateService;
-import br.com.george.commerce.service.security.JwtService;
+import br.com.george.commerce.service.security.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,16 +29,13 @@ public class AffiliateServiceImpl implements AffiliateService {
     private final AffiliateSaleRepository affiliateSaleRepository;
     private final AffiliateMapper affiliateMapper;
     private final AffiliateSaleMapper affiliateSaleMapper;
-    private final UserRepository userRepository;
-    private final JwtService jwtService;
+    private final CurrentUserService currentUserService;
 
 
     @Override
     public MyAffiliateResponse myAffiliate() {
 
-        String email = jwtService.getCurrentUserEmail();
-
-        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        User user = currentUserService.get();
 
         Affiliate affiliate = affiliateRepository.findByUserId(user.getId()).orElseThrow(AffiliateNotFoundException::new);
 
@@ -49,9 +45,7 @@ public class AffiliateServiceImpl implements AffiliateService {
     @Override
     public List<AffiliateSaleResponse> mySales() {
 
-        String email = jwtService.getCurrentUserEmail();
-
-        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        User user = currentUserService.get();
 
         Affiliate affiliate = affiliateRepository.findByUserId(user.getId()).orElseThrow(AffiliateNotFoundException::new);
 
@@ -65,9 +59,7 @@ public class AffiliateServiceImpl implements AffiliateService {
     @Override
     public AffiliateResponse becomeAffiliate() {
 
-        String email = jwtService.getCurrentUserEmail();
-
-        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        User user = currentUserService.get();
 
         if (affiliateRepository.findByUserId(user.getId()).isPresent()) {
             throw new AffiliateAlreadyExistsException();
@@ -91,9 +83,7 @@ public class AffiliateServiceImpl implements AffiliateService {
     @Override
     public AffiliateSummaryResponse mySummary(AffiliateReportRequest request) {
 
-        String email = jwtService.getCurrentUserEmail();
-
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        User user = currentUserService.get();
 
         Affiliate affiliate = affiliateRepository.findByUserId(user.getId()).orElseThrow(AffiliateNotFoundException::new);
 

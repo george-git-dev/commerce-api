@@ -8,9 +8,8 @@ import br.com.george.commerce.exception.AddressNotFoundException;
 import br.com.george.commerce.exception.UserNotFoundException;
 import br.com.george.commerce.mapper.AddressMapper;
 import br.com.george.commerce.repository.AddressRepository;
-import br.com.george.commerce.repository.UserRepository;
 import br.com.george.commerce.service.AddressService;
-import br.com.george.commerce.service.security.JwtService;
+import br.com.george.commerce.service.security.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +20,8 @@ import java.util.List;
 public class AddressServiceImpl implements AddressService {
 
     private final AddressRepository repository;
-    private final UserRepository userRepository;
     private final AddressMapper mapper;
-    private final JwtService jwtService;
+    private final CurrentUserService currentUserService;
 
     @Override
     public AddressResponse findById(Long id) {
@@ -34,9 +32,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public AddressResponse save(CreateAddressRequest request) {
 
-        String email = jwtService.getCurrentUserEmail();
-
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        User user = currentUserService.get();
 
         if (Boolean.TRUE.equals(request.primaryAddress())) {
             List<Address> addresses = repository.findByUserId(user.getId());
@@ -66,10 +62,7 @@ public class AddressServiceImpl implements AddressService {
 
         Address address = repository.findById(id).orElseThrow(() -> new AddressNotFoundException(id));
 
-        String email = jwtService.getCurrentUserEmail();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(email));
+        User user = currentUserService.get();
 
         if (!address.getUser().getId().equals(user.getId())) {
             throw new AddressNotFoundException(id);
@@ -103,8 +96,7 @@ public class AddressServiceImpl implements AddressService {
     public void delete(Long id) {
         Address address = repository.findById(id).orElseThrow(() -> new AddressNotFoundException(id));
 
-        String email = jwtService.getCurrentUserEmail();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        User user = currentUserService.get();
 
         if (!address.getUser().getId().equals(user.getId())) {
             throw new AddressNotFoundException(id);
@@ -114,8 +106,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public List<AddressResponse> myAddresses() {
-        String email = jwtService.getCurrentUserEmail();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        User user = currentUserService.get();
 
         return repository.findByUserId(user.getId())
                 .stream()

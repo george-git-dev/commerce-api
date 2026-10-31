@@ -11,7 +11,7 @@ import br.com.george.commerce.mapper.OrderMapper;
 import br.com.george.commerce.repository.*;
 import br.com.george.commerce.service.DiscountService;
 import br.com.george.commerce.service.OrderService;
-import br.com.george.commerce.service.security.JwtService;
+import br.com.george.commerce.service.security.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +33,7 @@ public class OrderServiceImpl implements OrderService {
     private final AddressRepository addressRepository;
     private final ProductRepository productRepository;
     private final OrderMapper mapper;
-    private final JwtService jwtService;
+    private final CurrentUserService currentUserService;
     private final DiscountService discountService;
     private final AffiliateRepository affiliateRepository;
     private final AffiliateSaleRepository affiliateSaleRepository;
@@ -173,9 +173,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderResponse> myOrders() {
 
-        String email = jwtService.getCurrentUserEmail();
-
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        User user = currentUserService.get();
 
         return orderRepository.findByUserId(user.getId())
                 .stream()
@@ -185,8 +183,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse checkout(CreateOrderRequest request) {
-        String email = jwtService.getCurrentUserEmail();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        User user = currentUserService.get();
         return checkout(user.getId(), request);
     }
 

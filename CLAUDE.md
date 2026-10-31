@@ -29,7 +29,7 @@ Ambiente: Windows com Git Bash (MINGW64). Usar o Maven Wrapper.
 
 ## Stack
 
-Java 21, Spring Boot 4.1 (Web, Data JPA, Security, Validation), JWT com jjwt 0.12, Lombok, MapStruct 1.6, springdoc-openapi, H2 (dev) e PostgreSQL (produção).
+Java 21, Spring Boot 4.1 (Web, Data JPA, Security, Validation), OAuth2 Resource Server (token do Keycloak), Lombok, MapStruct 1.6, springdoc-openapi, H2 (dev) e PostgreSQL (produção).
 
 ## Profiles e banco
 
@@ -45,7 +45,7 @@ Pacote base `br.com.george.commerce`, em camadas:
   - `publico/`: sem autenticação (catálogo, cadastro, login)
   - `me/`: área do cliente autenticado (`/me/...`: carrinho, pedidos, endereços, conta, afiliado)
   - `admin/`: backoffice (catálogo, pedidos, financeiro, inventário, relatórios, usuários, vendas manuais)
-- `service/`: interfaces; implementações em `service/impl/`. Autenticação e JWT em `service/security/`.
+- `service/`: interfaces; implementações em `service/impl/`. Usuário do token (`CurrentUserService`) e conversor de papéis do Keycloak em `service/security/`.
 - `repository/`: Spring Data JPA.
 - `entity/`: entidades JPA. `enums/`: enums de domínio.
 - `dto/`: records de request e response, agrupados por domínio (`dto/product`, `dto/cart`…).
@@ -74,17 +74,17 @@ Seguir o padrão do código existente:
 
 ## Segurança
 
-- API stateless com JWT (`JwtAuthenticationFilter` antes do `UsernamePasswordAuthenticationFilter`) e CSRF desabilitado.
+- API stateless, **resource server do Keycloak** (commerce-auth): aceita só token com emissor = realm da loja e `aud = commerce-api` (`SecurityConfig`). Papéis do realm (`ROLE_*`) e permissões do cliente `commerce-api` viram authorities (`KeycloakJwtAuthenticationConverter`). Login, cadastro, senha, 2 etapas e papéis são do Keycloak — **nada disso existe aqui**. Quem chama é o BFF (sem CORS).
 - Rotas públicas ficam no `SecurityConfig`: `/auth/**`, `POST /users`, `GET` do catálogo (`/products`, `/categories`, `/brands`, `/promotions`), Swagger e console do H2. **O resto exige autenticação.**
 - Autorização por método com `@PreAuthorize` **em todo endpoint** não público:
   - cliente: `isAuthenticated()`
   - leitura do backoffice: `hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')`
   - escrita do backoffice: `hasAnyRole('ADMIN','SUPER_ADMIN')`
   - gestão de usuários e ações críticas: `hasRole('SUPER_ADMIN')`
-- Endpoints `/me/**` identificam o usuário pelo token (`jwtService.getCurrentUserEmail()`), **nunca** por um id recebido na requisição.
+- Endpoints `/me/**` identificam o usuário pelo token (`currentUserService.get()`, ligado pelo `sub` em `users.keycloak_id`), **nunca** por um id recebido na requisição. No primeiro acesso o perfil é ligado pelo e-mail confirmado ou criado sem CPF.
 - Senhas sempre com hash BCrypt (`PasswordConfig`). Nunca logar nem devolver senha, token ou hash.
 - Toda entrada validada com Bean Validation nos DTOs e `@Valid` no parâmetro do controller.
-- Nunca colocar segredo (chave JWT, senha de banco) no código ou nos `.properties` versionados. Usar variável de ambiente.
+- Nunca colocar segredo (senha de banco, segredo de cliente) no código ou nos `.properties` versionados. Usar variável de ambiente.
 
 ## Testes
 
@@ -106,7 +106,6 @@ Hoje só existe o teste de contexto (`CommerceApiApplicationTests`). Para códig
 
 **Antes de ir para produção (bloqueiam o deploy):**
 
-- A chave JWT está fixa no código (`JwtService.SECRET_KEY`) e o repositório é público: mover para variável de ambiente e gerar uma chave nova.
 - As credenciais do Postgres estão em `application-postgres.properties`: mover para variáveis de ambiente.
 - O CORS está fixo em `http://localhost:4200` (`SecurityConfig`): tornar configurável por ambiente.
 - `ddl-auto=update` no profile de produção: adotar o Flyway (baseline V1 e `ddl-auto=validate`) antes do primeiro deploy.

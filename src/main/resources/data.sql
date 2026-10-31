@@ -64,32 +64,29 @@ VALUES ('Noite de Oud', 'Eau de Parfum 100ml, notas amadeiradas e especiadas.', 
         (SELECT id FROM categories WHERE name = 'Masculinos'), (SELECT id FROM brands WHERE name = 'Deserto Dourado'),
         NOW(), NOW());
 
--- 3) Usuários de teste
--- Senha de TODOS: senha123 (hash BCrypt abaixo já é dessa senha em texto puro)
-INSERT INTO users (cpf, name, email, password, active, role)
-VALUES ('11111111111', 'George Admin', 'admin@commerce.com',
-        '$2b$10$4iVc9yK/7zO70LCt/6uhfOUroilQJgpULcwT2Cw5x.SbSbACHyD1i', true, 'ROLE_SUPER_ADMIN'),
-       ('22222222222', 'Ana Operadora', 'ana.admin@commerce.com',
-        '$2b$10$4iVc9yK/7zO70LCt/6uhfOUroilQJgpULcwT2Cw5x.SbSbACHyD1i', true, 'ROLE_ADMIN'),
-       ('33333333333', 'Paulo Visualizador', 'paulo.viewer@commerce.com',
-        '$2b$10$4iVc9yK/7zO70LCt/6uhfOUroilQJgpULcwT2Cw5x.SbSbACHyD1i', true, 'ROLE_VIEWER'),
-       ('44444444444', 'Maria Cliente', 'maria.cliente@commerce.com',
-        '$2b$10$4iVc9yK/7zO70LCt/6uhfOUroilQJgpULcwT2Cw5x.SbSbACHyD1i', true, 'ROLE_CUSTOMER'),
-       ('55555555555', 'João Cliente', 'joao.cliente@commerce.com',
-        '$2b$10$4iVc9yK/7zO70LCt/6uhfOUroilQJgpULcwT2Cw5x.SbSbACHyD1i', true, 'ROLE_CUSTOMER');
+-- 3) Usuários de teste — os MESMOS do Keycloak de desenvolvimento (commerce-auth,
+-- scripts/seed-dev-users.sh). Sem senha nem papel: login e papéis são do Keycloak.
+-- No primeiro acesso com token, a API liga a conta pelo e-mail confirmado e grava o
+-- keycloak_id (sub). Os dados de teste de cliente (endereços, pedidos) ficam com Ana e Bia.
+INSERT INTO users (cpf, name, email, active)
+VALUES ('11111111111', 'Super Admin', 'superadmin@email.com', true),
+       ('22222222222', 'Admin Loja', 'admin@email.com', true),
+       ('33333333333', 'Visualizador Loja', 'viewer@email.com', true),
+       ('44444444444', 'Ana Souza', 'ana@email.com', true),
+       ('55555555555', 'Bia Lima', 'bia@email.com', true);
 
 -- 4) Endereços (um por cliente)
 INSERT INTO addresses (street, number, complement, neighborhood, city, state, zip_code, primary_address, user_id)
 VALUES ('Rua das Flores', '123', 'Apto 45', 'Centro', 'São Paulo', 'SP', '01000-000', true,
-        (SELECT id FROM users WHERE email = 'maria.cliente@commerce.com')),
+        (SELECT id FROM users WHERE email = 'ana@email.com')),
        ('Av. Brasil', '456', NULL, 'Jardim América', 'Rio de Janeiro', 'RJ', '20000-000', true,
-        (SELECT id FROM users WHERE email = 'joao.cliente@commerce.com'));
+        (SELECT id FROM users WHERE email = 'bia@email.com'));
 
 -- 5) Pedidos + itens + pagamentos
 -- Pedido 1 — Maria, ENTREGUE, pago via PIX
 INSERT INTO orders (user_id, address_id, total, status, created_at)
-VALUES ((SELECT id FROM users WHERE email = 'maria.cliente@commerce.com'),
-        (SELECT id FROM addresses WHERE user_id = (SELECT id FROM users WHERE email = 'maria.cliente@commerce.com')),
+VALUES ((SELECT id FROM users WHERE email = 'ana@email.com'),
+        (SELECT id FROM addresses WHERE user_id = (SELECT id FROM users WHERE email = 'ana@email.com')),
         1049.70, 'ENTREGUE', DATEADD('DAY', -20, NOW()));
 INSERT INTO order_items (order_id, product_name, product_price, quantity, subtotal)
 VALUES ((SELECT MAX(id) FROM orders), 'Noite de Oud', 389.90, 1, 389.90),
@@ -99,8 +96,8 @@ VALUES ((SELECT MAX(id) FROM orders), 1049.70, 'PIX', 'APROVADO', DATEADD('DAY',
 
 -- Pedido 2 — Maria, PAGO, aguardando envio
 INSERT INTO orders (user_id, address_id, total, status, created_at)
-VALUES ((SELECT id FROM users WHERE email = 'maria.cliente@commerce.com'),
-        (SELECT id FROM addresses WHERE user_id = (SELECT id FROM users WHERE email = 'maria.cliente@commerce.com')),
+VALUES ((SELECT id FROM users WHERE email = 'ana@email.com'),
+        (SELECT id FROM addresses WHERE user_id = (SELECT id FROM users WHERE email = 'ana@email.com')),
         459.90, 'PAGO', DATEADD('DAY', -2, NOW()));
 INSERT INTO order_items (order_id, product_name, product_price, quantity, subtotal)
 VALUES ((SELECT MAX(id) FROM orders), 'Couro Nobre', 459.90, 1, 459.90);
@@ -109,16 +106,16 @@ VALUES ((SELECT MAX(id) FROM orders), 459.90, 'CARTAO_CREDITO', 'APROVADO', DATE
 
 -- Pedido 3 — João, PENDENTE, sem pagamento ainda (testar fluxo "aguardando pagamento")
 INSERT INTO orders (user_id, address_id, total, status, created_at)
-VALUES ((SELECT id FROM users WHERE email = 'joao.cliente@commerce.com'),
-        (SELECT id FROM addresses WHERE user_id = (SELECT id FROM users WHERE email = 'joao.cliente@commerce.com')),
+VALUES ((SELECT id FROM users WHERE email = 'bia@email.com'),
+        (SELECT id FROM addresses WHERE user_id = (SELECT id FROM users WHERE email = 'bia@email.com')),
         349.90, 'PENDENTE', NOW());
 INSERT INTO order_items (order_id, product_name, product_price, quantity, subtotal)
 VALUES ((SELECT MAX(id) FROM orders), 'Vetiver Intenso', 349.90, 1, 349.90);
 
 -- Pedido 4 — João, CANCELADO, pagamento recusado via boleto
 INSERT INTO orders (user_id, address_id, total, status, created_at)
-VALUES ((SELECT id FROM users WHERE email = 'joao.cliente@commerce.com'),
-        (SELECT id FROM addresses WHERE user_id = (SELECT id FROM users WHERE email = 'joao.cliente@commerce.com')),
+VALUES ((SELECT id FROM users WHERE email = 'bia@email.com'),
+        (SELECT id FROM addresses WHERE user_id = (SELECT id FROM users WHERE email = 'bia@email.com')),
         399.90, 'CANCELADO', DATEADD('DAY', -10, NOW()));
 INSERT INTO order_items (order_id, product_name, product_price, quantity, subtotal)
 VALUES ((SELECT MAX(id) FROM orders), 'Rosa do Deserto', 399.90, 1, 399.90);

@@ -9,7 +9,7 @@ import br.com.george.commerce.mapper.CartMapper;
 import br.com.george.commerce.repository.*;
 import br.com.george.commerce.service.CartService;
 import br.com.george.commerce.service.DiscountService;
-import br.com.george.commerce.service.security.JwtService;
+import br.com.george.commerce.service.security.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +30,7 @@ public class CartServiceImpl implements CartService {
     private final ProductRepository productRepository;
     private final AffiliateRepository affiliateRepository;
     private final CartMapper mapper;
-    private final JwtService jwtService;
+    private final CurrentUserService currentUserService;
     private final DiscountService discountService;
 
     @Override
@@ -167,9 +167,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartResponse myCart() {
 
-        String email = jwtService.getCurrentUserEmail();
-
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        User user = currentUserService.get();
 
         Cart cart = cartRepository.findByUserId(user.getId()).orElseGet(() -> {
             Cart newCart = Cart.builder().user(user).build();
@@ -193,9 +191,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public void applyCoupon(String couponCode) {
 
-        String email = jwtService.getCurrentUserEmail();
-
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        User user = currentUserService.get();
 
         Cart cart = cartRepository.findByUserId(user.getId())
                 .orElseGet(() -> {
@@ -223,29 +219,25 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartResponse addItem(CreateCartItemRequest request) {
-        String email = jwtService.getCurrentUserEmail();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        User user = currentUserService.get();
         return addItem(user.getId(), request);
     }
 
     @Override
     public void removeItem(Long itemId) {
-        String email = jwtService.getCurrentUserEmail();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        User user = currentUserService.get();
         removeItem(user.getId(), itemId);
     }
 
     @Override
     public CartResponse updateItemQuantity(Long itemId, UpdateCartItemRequest request) {
-        String email = jwtService.getCurrentUserEmail();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        User user = currentUserService.get();
         return updateItemQuantity(user.getId(), itemId, request);
     }
 
     @Override
     public void clearCart() {
-        String email = jwtService.getCurrentUserEmail();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        User user = currentUserService.get();
         clearCart(user.getId());
     }
 

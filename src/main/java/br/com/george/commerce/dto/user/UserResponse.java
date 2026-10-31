@@ -1,7 +1,6 @@
 package br.com.george.commerce.dto.user;
 
-import br.com.george.commerce.enums.Role;
-
+/** Perfil na loja. Papéis e permissões vêm do token do Keycloak, não daqui. */
 public record UserResponse(
 
         Long id,
@@ -12,9 +11,7 @@ public record UserResponse(
 
         String email,
 
-        Boolean active,
-
-        Role role
+        Boolean active
 
 ) {
 }

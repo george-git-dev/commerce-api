@@ -26,14 +26,8 @@ tags:
   description: Estoque e indicadores de inventário.
 - name: Área do Cliente - Endereços
   description: Endereços cadastrados pelo usuário autenticado.
-- name: Área do Cliente - Minha Conta
-  description: "Dados da conta, alteração de senha e e-mail."
 - name: Área do Cliente - Carrinho
   description: Carrinho de compras do usuário autenticado.
-- name: Público - Autenticação
-  description: "Login, recuperação e redefinição de senha."
-- name: Administração - Usuários
-  description: Gestão administrativa de usuários e permissões.
 - name: Administração - Relatórios de Vendas
   description: Indicadores e métricas de vendas.
 - name: Público - Catálogo
@@ -46,10 +40,12 @@ tags:
   description: Indicadores financeiros consolidados.
 - name: Administração - Financeiro
   description: Resumo financeiro e indicadores.
+- name: Área do Cliente - Minha Conta
+  description: Dados da conta na loja.
 - name: Administração - Pedidos
   description: Consulta e gerenciamento administrativo de pedidos.
-- name: Público - Cadastro
-  description: Cadastro de novos usuários na plataforma.
+- name: Administração - Usuários
+  description: Consulta de usuários da loja.
 - name: Administração - Despesas
   description: Cadastro e manutenção de despesas.
 - name: Administração - Relatórios de Afiliados
@@ -66,69 +62,12 @@ tags:
 - name: Administração - Venda Manual
   description: Registro de vendas realizadas manualmente.
 paths:
-  /users/{id}:
-    get:
-      tags:
-      - Administração - Usuários
-      operationId: findById
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/UserResponse"
-    put:
-      tags:
-      - Administração - Usuários
-      operationId: update
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateUserRequest"
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/UserResponse"
-    delete:
-      tags:
-      - Administração - Usuários
-      operationId: delete
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-      responses:
-        "200":
-          description: OK
   /promotions/{id}:
     get:
       tags:
       - Público - Catálogo
       summary: Consultar promoção por ID
-      operationId: findById_1
+      operationId: findById
       parameters:
       - name: id
         in: path
@@ -147,7 +86,7 @@ paths:
       tags:
       - Administração - Catálogo
       summary: Atualizar promoção
-      operationId: update_1
+      operationId: update
       parameters:
       - name: id
         in: path
@@ -172,7 +111,7 @@ paths:
       tags:
       - Administração - Catálogo
       summary: Excluir promoção
-      operationId: delete_1
+      operationId: delete
       parameters:
       - name: id
         in: path
@@ -188,7 +127,7 @@ paths:
       tags:
       - Público - Catálogo
       summary: Consultar produto por ID
-      operationId: findById_2
+      operationId: findById_1
       parameters:
       - name: id
         in: path
@@ -207,7 +146,7 @@ paths:
       tags:
       - Administração - Catálogo
       summary: Atualizar produto
-      operationId: update_2
+      operationId: update_1
       parameters:
       - name: id
         in: path
@@ -232,7 +171,7 @@ paths:
       tags:
       - Administração - Catálogo
       summary: Excluir produto
-      operationId: delete_2
+      operationId: delete_1
       parameters:
       - name: id
         in: path
@@ -286,7 +225,7 @@ paths:
     get:
       tags:
       - Administração - Despesas
-      operationId: findById_3
+      operationId: findById_2
       parameters:
       - name: id
         in: path
@@ -304,7 +243,7 @@ paths:
     put:
       tags:
       - Administração - Despesas
-      operationId: update_3
+      operationId: update_2
       parameters:
       - name: id
         in: path
@@ -328,7 +267,7 @@ paths:
     delete:
       tags:
       - Administração - Despesas
-      operationId: delete_3
+      operationId: delete_2
       parameters:
       - name: id
         in: path
@@ -344,7 +283,7 @@ paths:
       tags:
       - Público - Catálogo
       summary: Consultar categoria por ID
-      operationId: findById_4
+      operationId: findById_3
       parameters:
       - name: id
         in: path
@@ -363,7 +302,7 @@ paths:
       tags:
       - Administração - Catálogo
       summary: Atualizar categoria
-      operationId: update_4
+      operationId: update_3
       parameters:
       - name: id
         in: path
@@ -388,7 +327,7 @@ paths:
       tags:
       - Administração - Catálogo
       summary: Excluir categoria
-      operationId: delete_4
+      operationId: delete_3
       parameters:
       - name: id
         in: path
@@ -404,7 +343,7 @@ paths:
       tags:
       - Público - Catálogo
       summary: Consultar marca por ID
-      operationId: findById_5
+      operationId: findById_4
       parameters:
       - name: id
         in: path
@@ -423,7 +362,7 @@ paths:
       tags:
       - Administração - Catálogo
       summary: Atualizar marca
-      operationId: update_5
+      operationId: update_4
       parameters:
       - name: id
         in: path
@@ -448,7 +387,7 @@ paths:
       tags:
       - Administração - Catálogo
       summary: Excluir marca
-      operationId: delete_5
+      operationId: delete_4
       parameters:
       - name: id
         in: path
@@ -459,38 +398,6 @@ paths:
       responses:
         "200":
           description: OK
-  /users:
-    get:
-      tags:
-      - Administração - Usuários
-      operationId: findAll
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/UserResponse"
-    post:
-      tags:
-      - Público - Cadastro
-      summary: Cadastrar usuário
-      operationId: save
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateUserRequest"
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/UserResponse"
   /reports/sales:
     post:
       tags:
@@ -594,7 +501,7 @@ paths:
       tags:
       - Público - Catálogo
       summary: Listar promoções
-      operationId: findAll_1
+      operationId: findAll
       responses:
         "200":
           description: OK
@@ -608,7 +515,7 @@ paths:
       tags:
       - Administração - Catálogo
       summary: Cadastrar promoção
-      operationId: save_1
+      operationId: save
       requestBody:
         content:
           application/json:
@@ -642,7 +549,7 @@ paths:
       tags:
       - Público - Catálogo
       summary: Listar produtos
-      operationId: findAll_2
+      operationId: findAll_1
       responses:
         "200":
           description: OK
@@ -656,7 +563,7 @@ paths:
       tags:
       - Administração - Catálogo
       summary: Cadastrar produto
-      operationId: save_2
+      operationId: save_1
       requestBody:
         content:
           application/json:
@@ -854,7 +761,7 @@ paths:
     get:
       tags:
       - Administração - Despesas
-      operationId: findAll_3
+      operationId: findAll_2
       responses:
         "200":
           description: OK
@@ -867,7 +774,7 @@ paths:
     post:
       tags:
       - Administração - Despesas
-      operationId: save_3
+      operationId: save_2
       requestBody:
         content:
           application/json:
@@ -886,7 +793,7 @@ paths:
       tags:
       - Público - Catálogo
       summary: Listar categorias
-      operationId: findAll_4
+      operationId: findAll_3
       responses:
         "200":
           description: OK
@@ -900,7 +807,7 @@ paths:
       tags:
       - Administração - Catálogo
       summary: Cadastrar categoria
-      operationId: save_4
+      operationId: save_3
       requestBody:
         content:
           application/json:
@@ -919,7 +826,7 @@ paths:
       tags:
       - Público - Catálogo
       summary: Listar marcas
-      operationId: findAll_5
+      operationId: findAll_4
       responses:
         "200":
           description: OK
@@ -933,7 +840,7 @@ paths:
       tags:
       - Administração - Catálogo
       summary: Cadastrar marca
-      operationId: save_5
+      operationId: save_4
       requestBody:
         content:
           application/json:
@@ -947,52 +854,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/BrandResponse"
-  /auth/reset-password:
-    post:
-      tags:
-      - Público - Autenticação
-      operationId: resetPassword
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ResetPasswordRequest"
-        required: true
-      responses:
-        "200":
-          description: OK
-  /auth/login:
-    post:
-      tags:
-      - Público - Autenticação
-      operationId: login
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/LoginRequest"
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/AuthResponse"
-  /auth/forgot-password:
-    post:
-      tags:
-      - Público - Autenticação
-      operationId: forgotPassword
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ForgotPasswordRequest"
-        required: true
-      responses:
-        "200":
-          description: OK
   /affiliates/me:
     get:
       tags:
@@ -1034,31 +895,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/AffiliateSummaryResponse"
-  /users/{id}/role:
-    patch:
-      tags:
-      - Administração - Usuários
-      operationId: updateRole
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UpdateUserRoleRequest"
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/UserResponse"
   /payments/{paymentId}/reject:
     patch:
       tags:
@@ -1122,34 +958,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/OrderResponse"
-  /me/password:
-    patch:
-      tags:
-      - Área do Cliente - Minha Conta
-      operationId: changePassword
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ChangePasswordRequest"
-        required: true
-      responses:
-        "200":
-          description: OK
-  /me/email:
-    patch:
-      tags:
-      - Área do Cliente - Minha Conta
-      operationId: changeEmail
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ChangeEmailRequest"
-        required: true
-      responses:
-        "200":
-          description: OK
   /me/cart/items/{itemId}:
     delete:
       tags:
@@ -1204,6 +1012,39 @@ paths:
       responses:
         "200":
           description: OK
+  /users:
+    get:
+      tags:
+      - Administração - Usuários
+      operationId: findAll_5
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserResponse"
+  /users/{id}:
+    get:
+      tags:
+      - Administração - Usuários
+      operationId: findById_5
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserResponse"
   /reports/financial/expenses/categories:
     get:
       tags:
@@ -1352,48 +1193,6 @@ paths:
                   $ref: "#/components/schemas/AffiliateSaleResponse"
 components:
   schemas:
-    CreateUserRequest:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-        cpf:
-          type: string
-          minLength: 1
-        email:
-          type: string
-          format: email
-          minLength: 1
-        password:
-          type: string
-          minLength: 1
-      required:
-      - cpf
-      - email
-      - name
-      - password
-    UserResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-        cpf:
-          type: string
-        email:
-          type: string
-        active:
-          type: boolean
-        role:
-          type: string
-          enum:
-          - ROLE_SUPER_ADMIN
-          - ROLE_ADMIN
-          - ROLE_VIEWER
-          - ROLE_CUSTOMER
     CreatePromotionRequest:
       type: object
       properties:
@@ -1999,45 +1798,6 @@ components:
           type: number
         resultadoLiquido:
           type: number
-    ResetPasswordRequest:
-      type: object
-      properties:
-        token:
-          type: string
-          minLength: 1
-        newPassword:
-          type: string
-          minLength: 1
-      required:
-      - newPassword
-      - token
-    LoginRequest:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-          minLength: 1
-        password:
-          type: string
-          minLength: 1
-      required:
-      - email
-      - password
-    AuthResponse:
-      type: object
-      properties:
-        token:
-          type: string
-    ForgotPasswordRequest:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-          minLength: 1
-      required:
-      - email
     AffiliateResponse:
       type: object
       properties:
@@ -2082,16 +1842,6 @@ components:
           type: number
         paidCommission:
           type: number
-    UpdateUserRoleRequest:
-      type: object
-      properties:
-        role:
-          type: string
-          enum:
-          - ROLE_SUPER_ADMIN
-          - ROLE_ADMIN
-          - ROLE_VIEWER
-          - ROLE_CUSTOMER
     UpdateOrderStatusRequest:
       type: object
       properties:
@@ -2105,36 +1855,6 @@ components:
           - CANCELADO
       required:
       - status
-    ChangePasswordRequest:
-      type: object
-      properties:
-        currentPassword:
-          type: string
-          minLength: 1
-        newPassword:
-          type: string
-          minLength: 1
-      required:
-      - currentPassword
-      - newPassword
-    ChangeEmailRequest:
-      type: object
-      properties:
-        currentEmail:
-          type: string
-          format: email
-          minLength: 1
-        password:
-          type: string
-          minLength: 1
-        newEmail:
-          type: string
-          format: email
-          minLength: 1
-      required:
-      - currentEmail
-      - newEmail
-      - password
     UpdateCartItemRequest:
       type: object
       properties:
@@ -2143,6 +1863,20 @@ components:
           format: int32
       required:
       - quantity
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        cpf:
+          type: string
+        email:
+          type: string
+        active:
+          type: boolean
     ExpenseCategoryStatsResponse:
       type: object
       properties:

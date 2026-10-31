@@ -1,7 +1,7 @@
 package br.com.george.commerce.config;
 
-import br.com.george.commerce.service.security.JwtAuthenticationFilter;
-import lombok.RequiredArgsConstructor;
+import br.com.george.commerce.service.security.KeycloakJwtAuthenticationConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,47 +9,63 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtClaimNames;
+import org.springframework.security.oauth2.jwt.JwtClaimValidator;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtValidators;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+/**
+ * A API só aceita token do Keycloak (resource server). Quem chama é o BFF, de servidor para
+ * servidor, repassando o token do cliente — o navegador nunca fala direto com a API (por isso
+ * não há CORS). Sem token: 401; token sem o papel/permissão: 403.
+ */
 @Configuration
-@RequiredArgsConstructor
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    /** O token tem que ter sido emitido PARA esta API ({@code aud}); token de outro sistema é recusado. */
+    public static final String AUDIENCE = "commerce-api";
 
+    /**
+     * Validação do token (A10): assinatura (no decoder), validade, emissor = realm da loja
+     * e {@code aud} = commerce-api.
+     */
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+    public OAuth2TokenValidator<Jwt> keycloakTokenValidator(@Value("${commerce.auth.issuer}") String issuer) {
+        return new DelegatingOAuth2TokenValidator<>(
+                JwtValidators.createDefaultWithIssuer(issuer),
+                new JwtClaimValidator<List<String>>(JwtClaimNames.AUD,
+                        audience -> audience != null && audience.contains(AUDIENCE)));
+    }
 
-        CorsConfiguration configuration = new CorsConfiguration();
-        // TODO: quando existir front em produção, adicionar a URL real aqui também.
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+    /**
+     * Chaves públicas pelo endereço interno do Keycloak (em produção, a rede do Docker); o emissor
+     * conferido continua sendo o endereço público. Nada é chamado na inicialização.
+     */
+    @Bean
+    public JwtDecoder jwtDecoder(@Value("${commerce.auth.jwk-set-uri}") String jwkSetUri,
+                                 OAuth2TokenValidator<Jwt> keycloakTokenValidator) {
+        NimbusJwtDecoder decoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
+        decoder.setJwtValidator(keycloakTokenValidator);
+        return decoder;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(
-            HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         return http
-                .cors(Customizer.withDefaults())
+                // Só token no cabeçalho, sem cookie nem sessão: CSRF não se aplica.
                 .csrf(AbstractHttpConfigurer::disable)
 
                 // H2 console usa <frame>; sem isso o navegador bloqueia
@@ -58,20 +74,9 @@ public class SecurityConfig {
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
 
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS))
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
-
-                        // Públicos
-                        .requestMatchers("/auth/**")
-                        .permitAll()
-
-                        .requestMatchers(
-                                HttpMethod.POST,
-                                "/users"
-                        )
-                        .permitAll()
 
                         .requestMatchers(
                                 "/v3/api-docs/**",
@@ -115,10 +120,8 @@ public class SecurityConfig {
                         .authenticated()
                 )
 
-                .addFilterBefore(
-                        jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class
-                )
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(new KeycloakJwtAuthenticationConverter())))
 
                 .build();
     }

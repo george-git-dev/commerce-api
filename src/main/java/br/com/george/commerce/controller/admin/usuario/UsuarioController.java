@@ -1,20 +1,24 @@
 package br.com.george.commerce.controller.admin.usuario;
 
-import br.com.george.commerce.dto.user.CreateUserRequest;
-import br.com.george.commerce.dto.user.UpdateUserRoleRequest;
 import br.com.george.commerce.dto.user.UserResponse;
 import br.com.george.commerce.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Consulta de clientes e equipe. Editar, bloquear, excluir e trocar papel voltam na B7,
+ * passando pela API de administração do Keycloak (onde vivem login e papéis).
+ */
 @Tag(
         name = "Administração - Usuários",
-        description = "Gestão administrativa de usuários e permissões."
+        description = "Consulta de usuários da loja."
 )
 @RestController
 @RequestMapping("/users")
@@ -35,24 +39,4 @@ public class UsuarioController {
         return userService.findById(id);
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
-    public UserResponse update(@PathVariable Long id, @Valid @RequestBody CreateUserRequest request) {
-        return userService.update(id, request);
-    }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public void delete(@PathVariable Long id) {
-        userService.delete(id);
-    }
-
-    @PatchMapping("/{id}/role")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public UserResponse updateRole(@PathVariable Long id, @RequestBody UpdateUserRoleRequest request) {
-        return userService.updateRole(id, request);
-    }
-
 }
-
-

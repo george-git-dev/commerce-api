@@ -50,12 +50,6 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage()));
     }
 
-    @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage()));
-    }
-
     @ExceptionHandler(AddressNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleAddressNotFound(AddressNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -110,34 +104,11 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
     }
 
-    @ExceptionHandler(LastSuperAdminException.class)
-    public ResponseEntity<ErrorResponse> handleLastSuperAdmin(LastSuperAdminException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
-    }
-
+    // Conta bloqueada na loja: o token é válido, mas a loja recusa (403).
     @ExceptionHandler(UserInactiveException.class)
     public ResponseEntity<ErrorResponse> handleUserInactive(UserInactiveException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
-    }
-
-    @ExceptionHandler(InvalidPasswordException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidPassword(InvalidPasswordException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
-    }
-
-    @ExceptionHandler(CpfAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleCpfAlreadyExists(CpfAlreadyExistsException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage()));
-    }
-
-    @ExceptionHandler(InvalidEmailChangeException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidEmailChange(InvalidEmailChangeException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse(HttpStatus.FORBIDDEN.value(), ex.getMessage()));
     }
 
     @ExceptionHandler(InsufficientStockException.class)
@@ -218,12 +189,6 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
     }
 
-    @ExceptionHandler(LastSuperAdminDeletionException.class)
-    public ResponseEntity<ErrorResponse> handleLastSuperAdminDeletion(LastSuperAdminDeletionException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
-    }
-
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
@@ -234,12 +199,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAuthentication(AuthenticationException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Usuário não autenticado."));
-    }
-
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage()));
     }
 
 }
