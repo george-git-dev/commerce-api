@@ -1,8 +1,9 @@
-package br.com.george.commerce.service.security;
+package br.com.george.commerce.service.impl;
 
 import br.com.george.commerce.entity.User;
 import br.com.george.commerce.exception.UserInactiveException;
 import br.com.george.commerce.repository.UserRepository;
+import br.com.george.commerce.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;

@@ -3,6 +3,7 @@ package br.com.george.commerce.controller.admin.vendamanual;
 import br.com.george.commerce.dto.manualsale.ManualSaleRequest;
 import br.com.george.commerce.dto.order.OrderResponse;
 import br.com.george.commerce.service.ManualSaleService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class VendaManualController {
 
     private final ManualSaleService manualSaleService;
 
+    @Operation(summary = "Registrar venda manual")
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     public OrderResponse createSale(@Valid @RequestBody ManualSaleRequest request) {

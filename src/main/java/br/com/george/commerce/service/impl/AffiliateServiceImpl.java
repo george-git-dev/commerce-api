@@ -13,7 +13,7 @@ import br.com.george.commerce.mapper.AffiliateSaleMapper;
 import br.com.george.commerce.repository.AffiliateRepository;
 import br.com.george.commerce.repository.AffiliateSaleRepository;
 import br.com.george.commerce.service.AffiliateService;
-import br.com.george.commerce.service.security.CurrentUserService;
+import br.com.george.commerce.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

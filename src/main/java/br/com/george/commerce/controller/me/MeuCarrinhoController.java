@@ -5,6 +5,7 @@ import br.com.george.commerce.dto.cart.CartResponse;
 import br.com.george.commerce.dto.cart.CreateCartItemRequest;
 import br.com.george.commerce.dto.cart.UpdateCartItemRequest;
 import br.com.george.commerce.service.CartService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,36 +30,42 @@ public class MeuCarrinhoController {
 
     private final CartService cartService;
 
+    @Operation(summary = "Ver minha sacola")
     @GetMapping("/cart")
     @PreAuthorize("isAuthenticated()")
     public CartResponse myCart() {
         return cartService.myCart();
     }
 
+    @Operation(summary = "Esvaziar sacola")
     @DeleteMapping("/cart")
     @PreAuthorize("isAuthenticated()")
     public void clearCart() {
         cartService.clearCart();
     }
 
+    @Operation(summary = "Adicionar item à sacola")
     @PostMapping("/cart/items")
     @PreAuthorize("isAuthenticated()")
     public CartResponse addItem(@Valid @RequestBody CreateCartItemRequest request) {
         return cartService.addItem(request);
     }
 
+    @Operation(summary = "Alterar quantidade do item")
     @PatchMapping("/cart/items/{itemId}")
     @PreAuthorize("isAuthenticated()")
     public CartResponse updateItemQuantity(@PathVariable Long itemId, @Valid @RequestBody UpdateCartItemRequest request) {
         return cartService.updateItemQuantity(itemId, request);
     }
 
+    @Operation(summary = "Remover item da sacola")
     @DeleteMapping("/cart/items/{itemId}")
     @PreAuthorize("isAuthenticated()")
     public void removeItem(@PathVariable Long itemId) {
         cartService.removeItem(itemId);
     }
 
+    @Operation(summary = "Aplicar cupom")
     @PostMapping("/cart/coupon")
     @PreAuthorize("isAuthenticated()")
     public void applyCoupon(@Valid @RequestBody ApplyCouponRequest request) {

@@ -46,13 +46,13 @@ Pacote base `br.com.george.commerce`, em camadas:
   - `publico/`: sem autenticação (catálogo, cadastro, login)
   - `me/`: área do cliente autenticado (`/me/...`: carrinho, pedidos, endereços, conta, afiliado)
   - `admin/`: backoffice (catálogo, pedidos, financeiro, inventário, relatórios, usuários, vendas manuais)
-- `service/`: interfaces; implementações em `service/impl/`. Usuário do token (`CurrentUserService`) e conversor de papéis do Keycloak em `service/security/`.
+- `service/`: interfaces; implementações em `service/impl/` (sempre, sem exceção). O usuário do token é o `CurrentUserService`. O conversor de papéis do Keycloak fica em `config/`, ao lado do `SecurityConfig`.
 - `repository/`: Spring Data JPA.
 - `entity/`: entidades JPA. `enums/`: enums de domínio.
 - `dto/`: records de request e response, agrupados por domínio (`dto/product`, `dto/cart`…).
 - `mapper/`: MapStruct (entidade → response).
 - `exception/`: exceções de domínio + `GlobalExceptionHandler` (`@RestControllerAdvice`).
-- `config/`: Security, CORS, Swagger, `PasswordEncoder`.
+- `config/`: Security (resource server do Keycloak) e Swagger.
 
 Controllers só recebem, validam e delegam. **Toda regra de negócio fica nos services.** Controllers nunca acessam repositories.
 
@@ -71,7 +71,7 @@ Seguir o padrão do código existente:
 - **Paginação obrigatória:** todo endpoint que lista uma coleção que cresce (produtos, pedidos, usuários, relatórios) recebe `Pageable` e devolve página, com tamanho máximo limitado. Listas pequenas e fixas (categorias, marcas) podem ser devolvidas sem paginação.
 - **Consultas e N+1:** relacionamentos novos com `fetch = FetchType.LAZY` (inclusive `@ManyToOne`, que é EAGER por padrão). Quando a resposta precisa do relacionamento, buscar na mesma consulta com `@EntityGraph` ou `JOIN FETCH`. Ao criar ou alterar uma listagem, conferir no log (`show-sql`) que ela não dispara uma consulta por item.
 - **Mensagens para o usuário** (exceções e validação) em **português**: o front exibe essas mensagens diretamente.
-- **Swagger:** todo controller com `@Tag` (nome e descrição em português). Depois de mudar endpoint ou DTO, rodar `./mvnw verify` para atualizar o `docs/swagger.yaml`.
+- **Swagger (mesmo padrão no BFF):** `@Tag(name = "Área - Assunto", description = "frase curta")` na classe, com as áreas `Público`, `Área do Cliente` e `Administração`; `@Operation(summary = "Verbo + objeto")` de **uma linha** em toda rota (ex.: "Listar produtos", "Cadastrar endereço"). Nada de `@ApiResponse` no controller: respostas comuns (401, 403, 500, 503) ficam no `SwaggerConfig`; detalhe vai no Javadoc. Depois de mudar endpoint ou DTO, rodar `./mvnw verify` para atualizar o `docs/swagger.yaml`.
 
 ## Segurança
 

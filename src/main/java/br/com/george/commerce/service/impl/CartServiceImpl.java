@@ -9,7 +9,7 @@ import br.com.george.commerce.mapper.CartMapper;
 import br.com.george.commerce.repository.*;
 import br.com.george.commerce.service.CartService;
 import br.com.george.commerce.service.DiscountService;
-import br.com.george.commerce.service.security.CurrentUserService;
+import br.com.george.commerce.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

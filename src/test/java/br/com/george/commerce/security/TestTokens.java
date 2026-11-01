@@ -2,7 +2,7 @@ package br.com.george.commerce.security;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 
-import br.com.george.commerce.service.security.KeycloakJwtAuthenticationConverter;
+import br.com.george.commerce.config.KeycloakJwtAuthenticationConverter;
 import java.util.List;
 import java.util.Map;
 import org.springframework.security.oauth2.jwt.Jwt;

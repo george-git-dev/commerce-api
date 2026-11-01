@@ -2,6 +2,7 @@ package br.com.george.commerce.controller.me;
 
 import br.com.george.commerce.dto.user.UserResponse;
 import br.com.george.commerce.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +22,7 @@ public class MinhaContaController {
 
     private final UserService userService;
 
+    @Operation(summary = "Meus dados na loja")
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public UserResponse user() {

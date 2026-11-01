@@ -1,6 +1,7 @@
 package br.com.george.commerce.controller.admin.afiliado;
 
 import br.com.george.commerce.service.AffiliateSaleService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +21,7 @@ public class AfiliadoController {
 
     private final AffiliateSaleService affiliateSaleService;
 
+    @Operation(summary = "Marcar comissão como paga")
     @PatchMapping("/sales/{saleId}/pay")
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     public void markAsPaid(@PathVariable Long saleId) {

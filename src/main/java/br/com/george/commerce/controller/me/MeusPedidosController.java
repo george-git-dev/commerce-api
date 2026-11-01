@@ -3,6 +3,7 @@ package br.com.george.commerce.controller.me;
 import br.com.george.commerce.dto.order.CreateOrderRequest;
 import br.com.george.commerce.dto.order.OrderResponse;
 import br.com.george.commerce.service.OrderService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +27,14 @@ public class MeusPedidosController {
 
     private final OrderService orderService;
 
+    @Operation(summary = "Listar meus pedidos")
     @GetMapping("/orders")
     @PreAuthorize("isAuthenticated()")
     public List<OrderResponse> myOrders() {
         return orderService.myOrders();
     }
 
+    @Operation(summary = "Finalizar compra")
     @PostMapping("/orders/checkout")
     @PreAuthorize("isAuthenticated()")
     public OrderResponse checkout(@Valid @RequestBody CreateOrderRequest request) {

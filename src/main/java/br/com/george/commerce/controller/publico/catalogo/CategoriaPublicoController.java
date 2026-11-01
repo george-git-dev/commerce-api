@@ -23,14 +23,14 @@ public class CategoriaPublicoController {
 
     private final CategoryService categoryService;
 
-    @GetMapping
     @Operation(summary = "Listar categorias")
+    @GetMapping
     public List<CategoryResponse> findAll() {
         return categoryService.findAll();
     }
 
+    @Operation(summary = "Consultar categoria")
     @GetMapping("/{id}")
-    @Operation(summary = "Consultar categoria por ID")
     public CategoryResponse findById(@PathVariable Long id) {
         return categoryService.findById(id);
     }

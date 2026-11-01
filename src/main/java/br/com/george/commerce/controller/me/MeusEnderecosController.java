@@ -3,6 +3,7 @@ package br.com.george.commerce.controller.me;
 import br.com.george.commerce.dto.address.AddressResponse;
 import br.com.george.commerce.dto.address.CreateAddressRequest;
 import br.com.george.commerce.service.AddressService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,24 +30,28 @@ public class MeusEnderecosController {
 
     private final AddressService addressService;
 
+    @Operation(summary = "Listar meus endereços")
     @GetMapping("/addresses")
     @PreAuthorize("isAuthenticated()")
     public List<AddressResponse> myAddresses() {
         return addressService.myAddresses();
     }
 
+    @Operation(summary = "Cadastrar endereço")
     @PostMapping("/addresses")
     @PreAuthorize("isAuthenticated()")
     public AddressResponse saveAddress(@Valid @RequestBody CreateAddressRequest request) {
         return addressService.save(request);
     }
 
+    @Operation(summary = "Atualizar endereço")
     @PutMapping("/addresses/{id}")
     @PreAuthorize("isAuthenticated()")
     public AddressResponse updateAddress(@PathVariable Long id, @Valid @RequestBody CreateAddressRequest request) {
         return addressService.update(id, request);
     }
 
+    @Operation(summary = "Excluir endereço")
     @DeleteMapping("/addresses/{id}")
     @PreAuthorize("isAuthenticated()")
     public void deleteAddress(@PathVariable Long id) {

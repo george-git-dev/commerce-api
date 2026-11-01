@@ -94,7 +94,8 @@ class KeycloakSecurityIntegrationTest {
         mvc.perform(get("/me").with(customer(sub, "ana@email.com")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Ana Souza"))
-                .andExpect(jsonPath("$.cpf").value("44444444444"));
+                .andExpect(jsonPath("$.cpf").value("***.444.444-**"))
+                .andExpect(jsonPath("$.phone").value("11987654321"));
         assertThat(users.findByKeycloakId(sub)).isPresent();
 
         // Outro login com o mesmo e-mail não assume a conta da Ana.

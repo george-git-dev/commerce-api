@@ -6,7 +6,7 @@ import br.com.george.commerce.exception.UserNotFoundException;
 import br.com.george.commerce.mapper.UserMapper;
 import br.com.george.commerce.repository.UserRepository;
 import br.com.george.commerce.service.UserService;
-import br.com.george.commerce.service.security.CurrentUserService;
+import br.com.george.commerce.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

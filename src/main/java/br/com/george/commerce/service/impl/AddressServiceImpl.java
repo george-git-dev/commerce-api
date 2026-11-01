@@ -9,7 +9,7 @@ import br.com.george.commerce.exception.UserNotFoundException;
 import br.com.george.commerce.mapper.AddressMapper;
 import br.com.george.commerce.repository.AddressRepository;
 import br.com.george.commerce.service.AddressService;
-import br.com.george.commerce.service.security.CurrentUserService;
+import br.com.george.commerce.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

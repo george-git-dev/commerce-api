@@ -23,14 +23,14 @@ public class ProdutoPublicoController {
 
     private final ProductService productService;
 
-    @GetMapping
     @Operation(summary = "Listar produtos")
+    @GetMapping
     public List<ProductResponse> findAll() {
         return productService.findAll();
     }
 
+    @Operation(summary = "Consultar produto")
     @GetMapping("/{id}")
-    @Operation(summary = "Consultar produto por ID")
     public ProductResponse findById(@PathVariable Long id) {
         return productService.findById(id);
     }

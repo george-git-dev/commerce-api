@@ -23,14 +23,14 @@ public class MarcaPublicoController {
 
     private final BrandService brandService;
 
-    @GetMapping
     @Operation(summary = "Listar marcas")
+    @GetMapping
     public List<BrandResponse> findAll() {
         return brandService.findAll();
     }
 
+    @Operation(summary = "Consultar marca")
     @GetMapping("/{id}")
-    @Operation(summary = "Consultar marca por ID")
     public BrandResponse findById(@PathVariable Long id) {
         return brandService.findById(id);
     }

@@ -2,6 +2,7 @@ package br.com.george.commerce.controller.admin.relatorio;
 
 import br.com.george.commerce.dto.report.customer.CustomerStatsResponse;
 import br.com.george.commerce.service.SalesReportService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +23,7 @@ public class RelatorioClienteController {
 
     private final SalesReportService salesReportService;
 
+    @Operation(summary = "Indicadores de clientes")
     @GetMapping
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
     public List<CustomerStatsResponse> getCustomerStatistics() {

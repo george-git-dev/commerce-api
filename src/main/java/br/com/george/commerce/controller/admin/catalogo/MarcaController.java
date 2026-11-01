@@ -21,22 +21,22 @@ public class MarcaController {
 
     private final BrandService brandService;
 
-    @PostMapping
     @Operation(summary = "Cadastrar marca")
+    @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     public BrandResponse save(@Valid @RequestBody CreateBrandRequest request) {
         return brandService.save(request);
     }
 
-    @PutMapping("/{id}")
     @Operation(summary = "Atualizar marca")
+    @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     public BrandResponse update(@PathVariable Long id, @Valid @RequestBody CreateBrandRequest request) {
         return brandService.update(id, request);
     }
 
-    @DeleteMapping("/{id}")
     @Operation(summary = "Excluir marca")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public void delete(@PathVariable Long id) {
         brandService.delete(id);

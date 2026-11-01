@@ -21,22 +21,22 @@ public class ProdutoController {
 
     private final ProductService productService;
 
-    @PostMapping
     @Operation(summary = "Cadastrar produto")
+    @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     public ProductResponse save(@Valid @RequestBody CreateProductRequest request) {
         return productService.save(request);
     }
 
-    @PutMapping("/{id}")
     @Operation(summary = "Atualizar produto")
+    @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     public ProductResponse update(@PathVariable Long id, @Valid @RequestBody CreateProductRequest request) {
         return productService.update(id, request);
     }
 
-    @DeleteMapping("/{id}")
     @Operation(summary = "Excluir produto")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public void delete(@PathVariable Long id) {
         productService.delete(id);

@@ -3,6 +3,7 @@ package br.com.george.commerce.controller.admin.pedido;
 import br.com.george.commerce.dto.order.OrderResponse;
 import br.com.george.commerce.dto.order.UpdateOrderStatusRequest;
 import br.com.george.commerce.service.OrderService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +21,14 @@ public class PedidoController {
 
     private final OrderService orderService;
 
+    @Operation(summary = "Consultar pedido")
     @GetMapping("/{orderId}")
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     public OrderResponse findById(@PathVariable Long orderId) {
         return orderService.findById(orderId);
     }
 
+    @Operation(summary = "Atualizar situação do pedido")
     @PatchMapping("/{orderId}/status")
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     public OrderResponse updateStatus(@PathVariable Long orderId, @Valid @RequestBody UpdateOrderStatusRequest request) {

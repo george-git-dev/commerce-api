@@ -11,7 +11,7 @@ import br.com.george.commerce.mapper.OrderMapper;
 import br.com.george.commerce.repository.*;
 import br.com.george.commerce.service.DiscountService;
 import br.com.george.commerce.service.OrderService;
-import br.com.george.commerce.service.security.CurrentUserService;
+import br.com.george.commerce.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

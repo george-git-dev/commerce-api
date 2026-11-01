@@ -2,6 +2,7 @@ package br.com.george.commerce.controller.admin.relatorio;
 
 import br.com.george.commerce.dto.report.financial.ExpenseCategoryStatsResponse;
 import br.com.george.commerce.service.SalesReportService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +23,7 @@ public class RelatorioFinanceiroController {
 
     private final SalesReportService salesReportService;
 
+    @Operation(summary = "Despesas por categoria")
     @GetMapping("/expenses/categories")
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
     public List<ExpenseCategoryStatsResponse> getExpenseCategoryStatistics() {

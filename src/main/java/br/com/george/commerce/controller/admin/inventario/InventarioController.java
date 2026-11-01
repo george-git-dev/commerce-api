@@ -6,6 +6,7 @@ import br.com.george.commerce.dto.report.inventory.InventoryFilterRequest;
 import br.com.george.commerce.dto.report.inventory.InventoryProductResponse;
 import br.com.george.commerce.dto.report.inventory.InventorySummaryResponse;
 import br.com.george.commerce.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,24 +26,28 @@ public class InventarioController {
 
     private final ProductService productService;
 
+    @Operation(summary = "Listar produtos do estoque")
     @PostMapping("/products")
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
     public List<InventoryProductResponse> findProducts(@Valid @RequestBody InventoryFilterRequest request) {
         return productService.findInventoryProducts(request);
     }
 
+    @Operation(summary = "Resumo do estoque")
     @GetMapping("/summary")
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
     public InventorySummaryResponse getSummary() {
         return productService.getInventorySummary();
     }
 
+    @Operation(summary = "Estoque por categoria")
     @GetMapping("/statistics/categories")
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
     public List<CategoryInventoryStatsResponse> getCategoryStatistics() {
         return productService.getCategoryStatistics();
     }
 
+    @Operation(summary = "Estoque por marca")
     @GetMapping("/statistics/brands")
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
     public List<BrandInventoryStatsResponse> getBrandStatistics() {

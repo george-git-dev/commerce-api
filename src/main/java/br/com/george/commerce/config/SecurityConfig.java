@@ -1,6 +1,5 @@
 package br.com.george.commerce.config;
 
-import br.com.george.commerce.service.security.KeycloakJwtAuthenticationConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package br.com.george.commerce.service.security;
+package br.com.george.commerce.service;
 
 import br.com.george.commerce.entity.User;
 

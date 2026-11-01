@@ -1,24 +1,13 @@
 openapi: 3.1.0
 info:
   title: Commerce API
-  description: "REST API para gestao de operacoes de comercio: catalogo, carrinho,\
-    \ pedidos, pagamentos e relatorios."
-  contact:
-    name: Equipe Commerce API
-    url: https://empresa.com/commerce-api
-    email: commerce-api@empresa.com
-  license:
-    name: Apache 2.0
-    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: "Domínio das lojas: catálogo, sacola, pedidos, pagamentos, afiliados\
+    \ e relatórios. Chamada pelo BFF de cada loja com o token do Keycloak. Erros no\
+    \ formato ProblemDetail: status, code e detail em português."
   version: "1.0"
-externalDocs:
-  description: Guia funcional e regras de negocio
-  url: https://empresa.com/docs/commerce
 servers:
 - url: http://localhost:8080
-  description: Ambiente local
-- url: https://api-dev.empresa.com
-  description: Ambiente de desenvolvimento
+  description: Local
 security:
 - bearerAuth: []
 tags:
@@ -66,7 +55,7 @@ paths:
     get:
       tags:
       - Público - Catálogo
-      summary: Consultar promoção por ID
+      summary: Consultar promoção
       operationId: findById
       parameters:
       - name: id
@@ -82,6 +71,14 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/PromotionResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     put:
       tags:
       - Administração - Catálogo
@@ -107,6 +104,14 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/PromotionResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     delete:
       tags:
       - Administração - Catálogo
@@ -122,11 +127,19 @@ paths:
       responses:
         "200":
           description: OK
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /products/{id}:
     get:
       tags:
       - Público - Catálogo
-      summary: Consultar produto por ID
+      summary: Consultar produto
       operationId: findById_1
       parameters:
       - name: id
@@ -142,6 +155,14 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ProductResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     put:
       tags:
       - Administração - Catálogo
@@ -167,6 +188,14 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ProductResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     delete:
       tags:
       - Administração - Catálogo
@@ -182,10 +211,19 @@ paths:
       responses:
         "200":
           description: OK
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /me/addresses/{id}:
     put:
       tags:
       - Área do Cliente - Endereços
+      summary: Atualizar endereço
       operationId: updateAddress
       parameters:
       - name: id
@@ -207,9 +245,18 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/AddressResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     delete:
       tags:
       - Área do Cliente - Endereços
+      summary: Excluir endereço
       operationId: deleteAddress
       parameters:
       - name: id
@@ -221,10 +268,19 @@ paths:
       responses:
         "200":
           description: OK
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /expenses/{id}:
     get:
       tags:
       - Administração - Despesas
+      summary: Consultar despesa
       operationId: findById_2
       parameters:
       - name: id
@@ -240,9 +296,18 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ExpenseResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     put:
       tags:
       - Administração - Despesas
+      summary: Atualizar despesa
       operationId: update_2
       parameters:
       - name: id
@@ -264,9 +329,18 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ExpenseResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     delete:
       tags:
       - Administração - Despesas
+      summary: Excluir despesa
       operationId: delete_2
       parameters:
       - name: id
@@ -278,11 +352,19 @@ paths:
       responses:
         "200":
           description: OK
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /categories/{id}:
     get:
       tags:
       - Público - Catálogo
-      summary: Consultar categoria por ID
+      summary: Consultar categoria
       operationId: findById_3
       parameters:
       - name: id
@@ -298,6 +380,14 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/CategoryResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     put:
       tags:
       - Administração - Catálogo
@@ -323,6 +413,14 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/CategoryResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     delete:
       tags:
       - Administração - Catálogo
@@ -338,11 +436,19 @@ paths:
       responses:
         "200":
           description: OK
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /brands/{id}:
     get:
       tags:
       - Público - Catálogo
-      summary: Consultar marca por ID
+      summary: Consultar marca
       operationId: findById_4
       parameters:
       - name: id
@@ -358,6 +464,14 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/BrandResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     put:
       tags:
       - Administração - Catálogo
@@ -383,6 +497,14 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/BrandResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     delete:
       tags:
       - Administração - Catálogo
@@ -398,10 +520,19 @@ paths:
       responses:
         "200":
           description: OK
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /reports/sales:
     post:
       tags:
       - Administração - Relatórios de Vendas
+      summary: Resumo de vendas do período
       operationId: summary
       requestBody:
         content:
@@ -416,10 +547,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/SalesSummaryResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /reports/sales/top-products:
     post:
       tags:
       - Administração - Relatórios de Vendas
+      summary: Produtos mais vendidos
       operationId: topProducts
       requestBody:
         content:
@@ -436,10 +576,19 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/TopProductResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /reports/sales/top-categories:
     post:
       tags:
       - Administração - Relatórios de Vendas
+      summary: Categorias mais vendidas
       operationId: topCategories
       requestBody:
         content:
@@ -456,10 +605,19 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/TopCategoryResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /reports/sales/top-brands:
     post:
       tags:
       - Administração - Relatórios de Vendas
+      summary: Marcas mais vendidas
       operationId: topBrands
       requestBody:
         content:
@@ -476,10 +634,19 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/TopBrandResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /reports/affiliates/ranking:
     post:
       tags:
       - Administração - Relatórios de Afiliados
+      summary: Ranking de afiliados
       operationId: ranking
       requestBody:
         content:
@@ -496,6 +663,14 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/AffiliateRankingResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /promotions:
     get:
       tags:
@@ -511,6 +686,14 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/PromotionResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     post:
       tags:
       - Administração - Catálogo
@@ -529,6 +712,14 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/PromotionResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /promotions/link-product:
     post:
       tags:
@@ -544,6 +735,14 @@ paths:
       responses:
         "200":
           description: OK
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /products:
     get:
       tags:
@@ -559,6 +758,14 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/ProductResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     post:
       tags:
       - Administração - Catálogo
@@ -577,10 +784,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ProductResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /orders/{orderId}/payment:
     get:
       tags:
       - Administração - Pagamentos
+      summary: Consultar pagamento do pedido
       operationId: findByOrder
       parameters:
       - name: orderId
@@ -596,9 +812,18 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/PaymentResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     post:
       tags:
       - Administração - Pagamentos
+      summary: Registrar pagamento do pedido
       operationId: createPayment
       parameters:
       - name: orderId
@@ -620,10 +845,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/PaymentResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /me/orders/checkout:
     post:
       tags:
       - Área do Cliente - Pedidos
+      summary: Finalizar compra
       operationId: checkout
       requestBody:
         content:
@@ -638,10 +872,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/OrderResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /me/cart/items:
     post:
       tags:
       - Área do Cliente - Carrinho
+      summary: Adicionar item à sacola
       operationId: addItem
       requestBody:
         content:
@@ -656,10 +899,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/CartResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /me/cart/coupon:
     post:
       tags:
       - Área do Cliente - Carrinho
+      summary: Aplicar cupom
       operationId: applyCoupon
       requestBody:
         content:
@@ -670,10 +922,19 @@ paths:
       responses:
         "200":
           description: OK
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /me/addresses:
     get:
       tags:
       - Área do Cliente - Endereços
+      summary: Listar meus endereços
       operationId: myAddresses
       responses:
         "200":
@@ -684,9 +945,18 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/AddressResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     post:
       tags:
       - Área do Cliente - Endereços
+      summary: Cadastrar endereço
       operationId: saveAddress
       requestBody:
         content:
@@ -701,10 +971,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/AddressResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /manual-sales:
     post:
       tags:
       - Administração - Venda Manual
+      summary: Registrar venda manual
       operationId: createSale
       requestBody:
         content:
@@ -719,10 +998,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/OrderResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /inventory/products:
     post:
       tags:
       - Administração - Inventário
+      summary: Listar produtos do estoque
       operationId: findProducts
       requestBody:
         content:
@@ -739,10 +1027,19 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/InventoryProductResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /financial/summary:
     post:
       tags:
       - Administração - Financeiro
+      summary: Resumo financeiro do período
       operationId: summary_1
       requestBody:
         content:
@@ -757,10 +1054,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/FinancialSummaryResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /expenses:
     get:
       tags:
       - Administração - Despesas
+      summary: Listar despesas
       operationId: findAll_2
       responses:
         "200":
@@ -771,9 +1077,18 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/ExpenseResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     post:
       tags:
       - Administração - Despesas
+      summary: Cadastrar despesa
       operationId: save_2
       requestBody:
         content:
@@ -788,6 +1103,14 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ExpenseResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /categories:
     get:
       tags:
@@ -803,6 +1126,14 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/CategoryResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     post:
       tags:
       - Administração - Catálogo
@@ -821,6 +1152,14 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/CategoryResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /brands:
     get:
       tags:
@@ -836,6 +1175,14 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/BrandResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     post:
       tags:
       - Administração - Catálogo
@@ -854,10 +1201,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/BrandResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /affiliates/me:
     get:
       tags:
       - Área do Cliente - Afiliado
+      summary: Meus dados de afiliado
       operationId: myAffiliate
       responses:
         "200":
@@ -866,9 +1222,18 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/MyAffiliateResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     post:
       tags:
       - Área do Cliente - Afiliado
+      summary: Tornar-se afiliado
       operationId: becomeAffiliate
       responses:
         "200":
@@ -877,10 +1242,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/AffiliateResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /affiliates/me/summary:
     post:
       tags:
       - Área do Cliente - Afiliado
+      summary: Resumo das minhas comissões
       operationId: mySummary
       requestBody:
         content:
@@ -895,10 +1269,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/AffiliateSummaryResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /payments/{paymentId}/reject:
     patch:
       tags:
       - Administração - Pagamentos
+      summary: Recusar pagamento
       operationId: rejectPayment
       parameters:
       - name: paymentId
@@ -914,10 +1297,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/PaymentResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /payments/{paymentId}/approve:
     patch:
       tags:
       - Administração - Pagamentos
+      summary: Aprovar pagamento
       operationId: approvePayment
       parameters:
       - name: paymentId
@@ -933,10 +1325,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/PaymentResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /orders/{orderId}/status:
     patch:
       tags:
       - Administração - Pedidos
+      summary: Atualizar situação do pedido
       operationId: updateStatus
       parameters:
       - name: orderId
@@ -958,10 +1359,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/OrderResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /me/cart/items/{itemId}:
     delete:
       tags:
       - Área do Cliente - Carrinho
+      summary: Remover item da sacola
       operationId: removeItem
       parameters:
       - name: itemId
@@ -973,9 +1383,18 @@ paths:
       responses:
         "200":
           description: OK
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     patch:
       tags:
       - Área do Cliente - Carrinho
+      summary: Alterar quantidade do item
       operationId: updateItemQuantity
       parameters:
       - name: itemId
@@ -997,10 +1416,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/CartResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /affiliates/sales/{saleId}/pay:
     patch:
       tags:
       - Administração - Afiliados
+      summary: Marcar comissão como paga
       operationId: markAsPaid
       parameters:
       - name: saleId
@@ -1012,10 +1440,19 @@ paths:
       responses:
         "200":
           description: OK
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /users:
     get:
       tags:
       - Administração - Usuários
+      summary: Listar usuários
       operationId: findAll_5
       responses:
         "200":
@@ -1026,10 +1463,19 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /users/{id}:
     get:
       tags:
       - Administração - Usuários
+      summary: Consultar usuário
       operationId: findById_5
       parameters:
       - name: id
@@ -1045,10 +1491,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /reports/financial/expenses/categories:
     get:
       tags:
       - Administração - Relatórios Financeiros
+      summary: Despesas por categoria
       operationId: getExpenseCategoryStatistics
       responses:
         "200":
@@ -1059,10 +1514,19 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/ExpenseCategoryStatsResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /reports/customers:
     get:
       tags:
       - Administração - Relatórios de Clientes
+      summary: Indicadores de clientes
       operationId: getCustomerStatistics
       responses:
         "200":
@@ -1073,10 +1537,19 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/CustomerStatsResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /orders/{orderId}:
     get:
       tags:
       - Administração - Pedidos
+      summary: Consultar pedido
       operationId: findById_6
       parameters:
       - name: orderId
@@ -1092,10 +1565,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/OrderResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /me:
     get:
       tags:
       - Área do Cliente - Minha Conta
+      summary: Meus dados na loja
       operationId: user
       responses:
         "200":
@@ -1104,10 +1586,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /me/orders:
     get:
       tags:
       - Área do Cliente - Pedidos
+      summary: Listar meus pedidos
       operationId: myOrders
       responses:
         "200":
@@ -1118,10 +1609,19 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/OrderResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /me/cart:
     get:
       tags:
       - Área do Cliente - Carrinho
+      summary: Ver minha sacola
       operationId: myCart
       responses:
         "200":
@@ -1130,17 +1630,35 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/CartResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
     delete:
       tags:
       - Área do Cliente - Carrinho
+      summary: Esvaziar sacola
       operationId: clearCart
       responses:
         "200":
           description: OK
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /inventory/summary:
     get:
       tags:
       - Administração - Inventário
+      summary: Resumo do estoque
       operationId: getSummary
       responses:
         "200":
@@ -1149,10 +1667,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/InventorySummaryResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /inventory/statistics/categories:
     get:
       tags:
       - Administração - Inventário
+      summary: Estoque por categoria
       operationId: getCategoryStatistics
       responses:
         "200":
@@ -1163,10 +1690,19 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/CategoryInventoryStatsResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /inventory/statistics/brands:
     get:
       tags:
       - Administração - Inventário
+      summary: Estoque por marca
       operationId: getBrandStatistics
       responses:
         "200":
@@ -1177,10 +1713,19 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/BrandInventoryStatsResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /affiliates/me/sales:
     get:
       tags:
       - Área do Cliente - Afiliado
+      summary: Minhas vendas como afiliado
       operationId: mySales
       responses:
         "200":
@@ -1191,6 +1736,14 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/AffiliateSaleResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
 components:
   schemas:
     CreatePromotionRequest:
@@ -1875,6 +2428,8 @@ components:
           type: string
         email:
           type: string
+        phone:
+          type: string
         active:
           type: boolean
     ExpenseCategoryStatsResponse:
@@ -1968,6 +2523,6 @@ components:
   securitySchemes:
     bearerAuth:
       type: http
-      name: bearerAuth
+      description: "Access token do Keycloak (realm da loja, aud = commerce-api)"
       scheme: bearer
       bearerFormat: JWT

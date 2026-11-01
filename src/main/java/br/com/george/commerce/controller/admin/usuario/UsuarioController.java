@@ -2,6 +2,7 @@ package br.com.george.commerce.controller.admin.usuario;
 
 import br.com.george.commerce.dto.user.UserResponse;
 import br.com.george.commerce.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,12 +28,14 @@ public class UsuarioController {
 
     private final UserService userService;
 
+    @Operation(summary = "Listar usuários")
     @GetMapping
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
     public List<UserResponse> findAll() {
         return userService.findAll();
     }
 
+    @Operation(summary = "Consultar usuário")
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
     public UserResponse findById(@PathVariable Long id) {

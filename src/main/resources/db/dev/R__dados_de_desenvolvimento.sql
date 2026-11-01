@@ -50,12 +50,12 @@ VALUES ('Noite de Oud', 'Eau de Parfum 100ml, notas amadeiradas e especiadas.', 
 -- scripts/seed-dev-users.sh). Sem senha nem papel: login e papéis são do Keycloak.
 -- No primeiro acesso com token, a API liga a conta pelo e-mail confirmado e grava o
 -- keycloak_id (sub). Os dados de teste de cliente (endereços, pedidos) ficam com Ana e Bia.
-INSERT INTO users (cpf, name, email, active)
-VALUES ('11111111111', 'Super Admin', 'superadmin@email.com', true),
-       ('22222222222', 'Admin Loja', 'admin@email.com', true),
-       ('33333333333', 'Visualizador Loja', 'viewer@email.com', true),
-       ('44444444444', 'Ana Souza', 'ana@email.com', true),
-       ('55555555555', 'Bia Lima', 'bia@email.com', true);
+INSERT INTO users (cpf, name, email, phone, active)
+VALUES ('11111111111', 'Super Admin', 'superadmin@email.com', NULL, true),
+       ('22222222222', 'Admin Loja', 'admin@email.com', NULL, true),
+       ('33333333333', 'Visualizador Loja', 'viewer@email.com', NULL, true),
+       ('44444444444', 'Ana Souza', 'ana@email.com', '11987654321', true),
+       ('55555555555', 'Bia Lima', 'bia@email.com', NULL, true);
 
 -- 4) Endereços (um por cliente)
 INSERT INTO addresses (street, number, complement, neighborhood, city, state, zip_code, primary_address, user_id)

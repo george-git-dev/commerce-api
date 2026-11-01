@@ -22,29 +22,29 @@ public class PromocaoController {
 
     private final PromotionService promotionService;
 
-    @PostMapping
     @Operation(summary = "Cadastrar promoção")
+    @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     public PromotionResponse save(@Valid @RequestBody CreatePromotionRequest request) {
         return promotionService.save(request);
     }
 
-    @PutMapping("/{id}")
     @Operation(summary = "Atualizar promoção")
+    @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     public PromotionResponse update(@PathVariable Long id, @Valid @RequestBody CreatePromotionRequest request) {
         return promotionService.update(id, request);
     }
 
-    @DeleteMapping("/{id}")
     @Operation(summary = "Excluir promoção")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public void delete(@PathVariable Long id) {
         promotionService.delete(id);
     }
 
-    @PostMapping("/link-product")
     @Operation(summary = "Vincular promoção a produto")
+    @PostMapping("/link-product")
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     public void linkToProduct(@Valid @RequestBody LinkPromotionToProductRequest request) {
         promotionService.linkToProduct(request);

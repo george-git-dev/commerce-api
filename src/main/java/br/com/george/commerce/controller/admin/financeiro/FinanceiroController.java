@@ -3,6 +3,7 @@ package br.com.george.commerce.controller.admin.financeiro;
 import br.com.george.commerce.dto.financial.FinancialSummaryRequest;
 import br.com.george.commerce.dto.financial.FinancialSummaryResponse;
 import br.com.george.commerce.service.FinancialService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +23,7 @@ public class FinanceiroController {
 
     private final FinancialService financialService;
 
+    @Operation(summary = "Resumo financeiro do período")
     @PostMapping("/summary")
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
     public FinancialSummaryResponse summary(@RequestBody FinancialSummaryRequest request) {

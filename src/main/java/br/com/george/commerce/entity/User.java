@@ -33,6 +33,10 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    /** Celular com DDD, só números (ex.: 11987654321). Opcional. */
+    @Column(length = 11)
+    private String phone;
+
     /** Bloqueio pela loja (backoffice). Bloqueado continua entrando no Keycloak, mas a API recusa (403). */
     private Boolean active;
 }

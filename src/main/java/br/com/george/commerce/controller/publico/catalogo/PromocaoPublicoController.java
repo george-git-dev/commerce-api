@@ -23,14 +23,14 @@ public class PromocaoPublicoController {
 
     private final PromotionService promotionService;
 
-    @GetMapping
     @Operation(summary = "Listar promoções")
+    @GetMapping
     public List<PromotionResponse> findAll() {
         return promotionService.findAll();
     }
 
+    @Operation(summary = "Consultar promoção")
     @GetMapping("/{id}")
-    @Operation(summary = "Consultar promoção por ID")
     public PromotionResponse findById(@PathVariable Long id) {
         return promotionService.findById(id);
     }

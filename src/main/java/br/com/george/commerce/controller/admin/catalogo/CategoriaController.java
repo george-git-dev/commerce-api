@@ -21,22 +21,22 @@ public class CategoriaController {
 
     private final CategoryService categoryService;
 
-    @PostMapping
     @Operation(summary = "Cadastrar categoria")
+    @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     public CategoryResponse save(@Valid @RequestBody CreateCategoryRequest request) {
         return categoryService.save(request);
     }
 
-    @DeleteMapping("/{id}")
     @Operation(summary = "Excluir categoria")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public void delete(@PathVariable Long id) {
         categoryService.delete(id);
     }
 
-    @PutMapping("/{id}")
     @Operation(summary = "Atualizar categoria")
+    @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     public CategoryResponse update(@PathVariable Long id,@Valid @RequestBody CreateCategoryRequest request) {
         return categoryService.update(id, request);
