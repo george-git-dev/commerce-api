@@ -1,8 +1,10 @@
 package br.com.george.commerce.exception;
 
-public class InsufficientStockException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class InsufficientStockException extends BusinessException {
 
     public InsufficientStockException(String productName) {
-        super("Insufficient stock for product: " + productName);
+        super(HttpStatus.UNPROCESSABLE_CONTENT, "OUT_OF_STOCK", "Não temos mais unidades suficientes de " + productName + ".");
     }
 }

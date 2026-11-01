@@ -1,9 +1,10 @@
 package br.com.george.commerce.exception;
 
-public class AddressNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class AddressNotFoundException extends BusinessException {
 
     public AddressNotFoundException(Long id) {
-        super("Address not found with id: " + id);
+        super(HttpStatus.NOT_FOUND, "ADDRESS_NOT_FOUND", "Endereço não encontrado.");
     }
-
 }

@@ -1,8 +1,10 @@
 package br.com.george.commerce.exception;
 
-public class PromotionNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class PromotionNotFoundException extends BusinessException {
 
     public PromotionNotFoundException(Long id) {
-        super("Promotion not found with id: " + id);
+        super(HttpStatus.NOT_FOUND, "PROMOTION_NOT_FOUND", "Promoção não encontrada.");
     }
 }

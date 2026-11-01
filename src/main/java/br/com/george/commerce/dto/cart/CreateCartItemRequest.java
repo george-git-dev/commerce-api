@@ -5,11 +5,11 @@ import jakarta.validation.constraints.Positive;
 
 public record CreateCartItemRequest(
 
-        @NotNull(message = "Product is required")
+        @NotNull(message = "Informe o produto.")
         Long productId,
 
-        @NotNull(message = "Quantity is required")
-        @Positive(message = "Quantity must be greater than zero")
+        @NotNull(message = "Informe a quantidade.")
+        @Positive(message = "A quantidade precisa ser maior que zero.")
         Integer quantity
 
 ) {

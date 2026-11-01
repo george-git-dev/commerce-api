@@ -1,9 +1,10 @@
 package br.com.george.commerce.exception;
 
-public class EmptyCartException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class EmptyCartException extends BusinessException {
 
     public EmptyCartException() {
-        super("Cart is empty");
+        super(HttpStatus.UNPROCESSABLE_CONTENT, "CART_EMPTY", "Sua sacola está vazia.");
     }
-
 }

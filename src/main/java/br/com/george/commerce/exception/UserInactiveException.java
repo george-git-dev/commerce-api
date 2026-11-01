@@ -1,8 +1,10 @@
 package br.com.george.commerce.exception;
 
-public class UserInactiveException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class UserInactiveException extends BusinessException {
 
     public UserInactiveException() {
-        super("User is inactive");
+        super(HttpStatus.FORBIDDEN, "ACCOUNT_BLOCKED", "Não foi possível acessar esta conta. Fale com o nosso atendimento.");
     }
 }

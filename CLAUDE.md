@@ -67,7 +67,7 @@ Seguir o padrão do código existente:
 - **Entidades:** Lombok `@Getter`, `@Setter`, `@Builder`, `@NoArgsConstructor` e `@AllArgsConstructor`. **Não usar `@Data`** em entidade. Tabelas no plural em snake_case (`@Table(name = "products")`).
 - **Dinheiro:** sempre `BigDecimal`, nunca `double` ou `float`.
 - **Transações:** `@Transactional` em todo método de service que escreve em mais de uma tabela ou depende de consistência (pedido, pagamento, estoque). Baixa de estoque é atômica no banco (`productRepository.decreaseStock`, que verifica as linhas afetadas); manter esse padrão.
-- **Erros:** criar uma exceção específica por regra (`XNotFoundException`, `XAlreadyExistsException`…) e registrar o status HTTP no `GlobalExceptionHandler`: 404 para não encontrado, 409 para conflito, 400 para regra violada, 401/403 para autenticação e permissão. Nada de `try-catch` espalhado para montar resposta HTTP. Nunca devolver stack trace nem mensagem técnica ao cliente. Formato-alvo das respostas de erro: `ProblemDetail` do Spring (RFC 9457); ver "Dívidas técnicas".
+- **Erros:** toda exceção de regra **estende `BusinessException`** passando status, `code` estável em inglês maiúsculo (ex.: `OUT_OF_STOCK`) e a frase para o cliente em português: `super(HttpStatus.UNPROCESSABLE_CONTENT, "OUT_OF_STOCK", "Não temos mais unidades de ...")`. O `GlobalExceptionHandler` transforma tudo em `ProblemDetail` (RFC 9457): `{ status, code, detail }` (+ `errors` campo → mensagem na validação). **Não precisa registrar handler novo.** Status: 404 não encontrado (também para recurso de outro usuário, sem revelar que existe), 409 conflito, 422 regra recusada, 400 dado inválido, 401/403 sessão e permissão. Erro inesperado vira 500 genérico e vai para o log. Nada de `try-catch` espalhado; nunca stack trace, SQL ou nome de classe na resposta.
 - **Paginação obrigatória:** todo endpoint que lista uma coleção que cresce (produtos, pedidos, usuários, relatórios) recebe `Pageable` e devolve página, com tamanho máximo limitado. Listas pequenas e fixas (categorias, marcas) podem ser devolvidas sem paginação.
 - **Consultas e N+1:** relacionamentos novos com `fetch = FetchType.LAZY` (inclusive `@ManyToOne`, que é EAGER por padrão). Quando a resposta precisa do relacionamento, buscar na mesma consulta com `@EntityGraph` ou `JOIN FETCH`. Ao criar ou alterar uma listagem, conferir no log (`show-sql`) que ela não dispara uma consulta por item.
 - **Mensagens para o usuário** (exceções e validação) em **português**: o front exibe essas mensagens diretamente.
@@ -100,9 +100,7 @@ Hoje só existe o teste de contexto (`CommerceApiApplicationTests`). Para códig
 
 **Na fase de adaptação ao front (mudam o contrato da API, então entram antes da integração):**
 
-- Migrar as respostas de erro para `ProblemDetail` (RFC 9457), substituindo `ErrorResponse` e `ValidationErrorResponse`. Os erros de validação vão como lista de campos em uma propriedade extra.
 - Adicionar paginação às listagens que hoje devolvem lista completa (produtos, pedidos, usuários, relatórios).
-- Padronizar para português as mensagens de validação dos DTOs, que hoje estão em inglês.
 - Revisar os relacionamentos existentes: `@ManyToOne` estão EAGER (padrão) e a listagem de produtos pode ter N+1 (categoria, marca e atributos).
 
 **Antes de ir para produção (bloqueiam o deploy):**
@@ -114,7 +112,6 @@ Hoje só existe o teste de contexto (`CommerceApiApplicationTests`). Para códig
 
 **Revisão pós-MVP (não fazer durante as etapas):**
 
-- O `GlobalExceptionHandler` tem um handler por exceção. Criar exceções base (`NotFoundException`, `ConflictException`, `BusinessException`) para mapear o status por hierarquia.
 - Os services repetem a resolução do usuário logado (email → `User`). Extrair para um componente.
 - `UserServiceImpl` injeta `BCryptPasswordEncoder` (classe concreta); trocar pela interface `PasswordEncoder` (DIP).
 - A cobertura de testes é baixa.

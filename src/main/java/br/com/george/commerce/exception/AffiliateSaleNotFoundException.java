@@ -1,8 +1,10 @@
 package br.com.george.commerce.exception;
 
-public class AffiliateSaleNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class AffiliateSaleNotFoundException extends BusinessException {
 
     public AffiliateSaleNotFoundException(Long id) {
-        super("Affiliate sale not found with id: " + id);
+        super(HttpStatus.NOT_FOUND, "AFFILIATE_SALE_NOT_FOUND", "Venda do afiliado não encontrada.");
     }
 }

@@ -1,17 +1,18 @@
 package br.com.george.commerce.exception;
 
-public class UserNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class UserNotFoundException extends BusinessException {
 
     public UserNotFoundException(Long id) {
-        super("User not found with id: " + id);
+        super(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", "Usuário não encontrado.");
     }
 
     public UserNotFoundException() {
-        super("User not found");
+        super(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", "Usuário não encontrado.");
     }
 
     public UserNotFoundException(String email) {
-        super("User not found with email: " + email);
+        super(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", "Usuário não encontrado.");
     }
-
 }

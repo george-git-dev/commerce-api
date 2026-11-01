@@ -1,7 +1,10 @@
 package br.com.george.commerce.exception;
 
-public class AffiliateAlreadyExistsException extends  RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class AffiliateAlreadyExistsException extends BusinessException {
+
     public AffiliateAlreadyExistsException() {
-        super("Affiliate already exists");
+        super(HttpStatus.CONFLICT, "AFFILIATE_ALREADY_EXISTS", "Esta conta já participa do programa de afiliados.");
     }
 }

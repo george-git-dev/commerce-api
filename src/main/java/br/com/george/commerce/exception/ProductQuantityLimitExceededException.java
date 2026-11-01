@@ -1,8 +1,10 @@
 package br.com.george.commerce.exception;
 
-public class ProductQuantityLimitExceededException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class ProductQuantityLimitExceededException extends BusinessException {
 
     public ProductQuantityLimitExceededException(Integer limit) {
-        super("Maximum quantity per product is " + limit);
+        super(HttpStatus.UNPROCESSABLE_CONTENT, "PRODUCT_QUANTITY_LIMIT", "Você pode levar no máximo " + limit + " unidades de cada produto.");
     }
 }

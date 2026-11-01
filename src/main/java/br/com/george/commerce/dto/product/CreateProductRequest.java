@@ -10,27 +10,27 @@ import java.util.List;
 
 public record CreateProductRequest(
 
-        @NotBlank(message = "Name is required")
+        @NotBlank(message = "Informe o nome.")
         String name,
 
-        @NotBlank(message = "Description is required")
+        @NotBlank(message = "Informe a descrição.")
         String description,
 
-        @NotNull(message = "Price is required")
-        @Positive(message = "Price must be greater than zero")
+        @NotNull(message = "Informe o preço.")
+        @Positive(message = "O preço precisa ser maior que zero.")
         BigDecimal price,
 
-        @NotNull(message = "Stock is required")
-        @PositiveOrZero(message = "Stock cannot be negative")
+        @NotNull(message = "Informe o estoque.")
+        @PositiveOrZero(message = "O estoque não pode ser negativo.")
         Integer stock,
 
-        @NotNull(message = "Active is required")
+        @NotNull(message = "Informe se está ativo.")
         Boolean active,
 
-        @NotNull(message = "Category is required")
+        @NotNull(message = "Informe a categoria.")
         Long categoryId,
 
-        @NotNull(message = "Brand is required")
+        @NotNull(message = "Informe a marca.")
         Long brandId,
 
         List<CreateProductAttributeRequest> attributes

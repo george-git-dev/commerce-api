@@ -5,10 +5,10 @@ import jakarta.validation.constraints.NotNull;
 
 public record CreateCategoryRequest(
 
-        @NotBlank(message = "Name is required")
+        @NotBlank(message = "Informe o nome.")
         String name,
 
-        @NotNull(message = "Active is required")
+        @NotNull(message = "Informe se está ativo.")
         Boolean active
 
 ) {

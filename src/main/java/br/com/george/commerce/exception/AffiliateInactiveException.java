@@ -1,8 +1,10 @@
 package br.com.george.commerce.exception;
 
-public class AffiliateInactiveException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class AffiliateInactiveException extends BusinessException {
 
     public AffiliateInactiveException() {
-        super("Affiliate is inactive");
+        super(HttpStatus.UNPROCESSABLE_CONTENT, "AFFILIATE_INACTIVE", "Este afiliado está inativo.");
     }
 }

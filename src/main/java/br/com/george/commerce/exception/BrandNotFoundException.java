@@ -1,8 +1,10 @@
 package br.com.george.commerce.exception;
 
-public class BrandNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class BrandNotFoundException extends BusinessException {
 
     public BrandNotFoundException(Long id) {
-        super("Brand not found with id: " + id);
+        super(HttpStatus.NOT_FOUND, "BRAND_NOT_FOUND", "Marca não encontrada.");
     }
 }

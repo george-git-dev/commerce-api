@@ -5,27 +5,27 @@ import jakarta.validation.constraints.NotNull;
 
 public record CreateAddressRequest(
 
-        @NotBlank(message = "Street is required")
+        @NotBlank(message = "Informe a rua.")
         String street,
 
-        @NotBlank(message = "Number is required")
+        @NotBlank(message = "Informe o número.")
         String number,
 
         String complement,
 
-        @NotBlank(message = "Neighborhood is required")
+        @NotBlank(message = "Informe o bairro.")
         String neighborhood,
 
-        @NotBlank(message = "City is required")
+        @NotBlank(message = "Informe a cidade.")
         String city,
 
-        @NotBlank(message = "State is required")
+        @NotBlank(message = "Informe o estado.")
         String state,
 
-        @NotBlank(message = "Zip code is required")
+        @NotBlank(message = "Informe o CEP.")
         String zipCode,
 
-        @NotNull(message = "Primary address is required")
+        @NotNull(message = "Informe se é o endereço principal.")
         Boolean primaryAddress
 
 ) {

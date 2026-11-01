@@ -1,7 +1,10 @@
 package br.com.george.commerce.exception;
 
-public class CouponExpiredException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class CouponExpiredException extends BusinessException {
+
     public CouponExpiredException() {
-        super("Coupon expired");
+        super(HttpStatus.UNPROCESSABLE_CONTENT, "COUPON_EXPIRED", "Este cupom expirou.");
     }
 }

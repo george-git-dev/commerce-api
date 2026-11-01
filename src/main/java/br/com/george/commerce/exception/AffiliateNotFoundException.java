@@ -1,8 +1,10 @@
 package br.com.george.commerce.exception;
 
-public class AffiliateNotFoundException extends RuntimeException{
+import org.springframework.http.HttpStatus;
+
+public class AffiliateNotFoundException extends BusinessException {
 
     public AffiliateNotFoundException() {
-        super("Affiliate not found");
+        super(HttpStatus.NOT_FOUND, "AFFILIATE_NOT_FOUND", "Afiliado não encontrado.");
     }
 }

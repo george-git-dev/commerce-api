@@ -1,8 +1,10 @@
 package br.com.george.commerce.exception;
 
-public class CartItemNotBelongToCartException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class CartItemNotBelongToCartException extends BusinessException {
 
     public CartItemNotBelongToCartException() {
-        super();
+        super(HttpStatus.NOT_FOUND, "CART_ITEM_NOT_FOUND", "Item não encontrado na sua sacola.");
     }
 }

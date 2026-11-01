@@ -1,8 +1,10 @@
 package br.com.george.commerce.exception;
 
-public class ProductAlreadyHasPromotionException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class ProductAlreadyHasPromotionException extends BusinessException {
 
     public ProductAlreadyHasPromotionException(Long productId) {
-        super("Product already has a promotion: " + productId);
+        super(HttpStatus.CONFLICT, "PRODUCT_ALREADY_IN_PROMOTION", "Este produto já está em outra promoção.");
     }
 }

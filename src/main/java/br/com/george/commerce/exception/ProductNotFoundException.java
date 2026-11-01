@@ -1,8 +1,10 @@
 package br.com.george.commerce.exception;
 
-public class ProductNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class ProductNotFoundException extends BusinessException {
 
     public ProductNotFoundException(Long id) {
-        super("Product not found with id: " + id);
+        super(HttpStatus.NOT_FOUND, "PRODUCT_NOT_FOUND", "Produto não encontrado.");
     }
 }
