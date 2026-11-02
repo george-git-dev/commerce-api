@@ -1,5 +1,7 @@
 package br.com.george.commerce.controller.me;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import br.com.george.commerce.dto.address.AddressResponse;
 import br.com.george.commerce.dto.address.CreateAddressRequest;
 import br.com.george.commerce.service.AddressService;
@@ -33,29 +35,30 @@ public class MeusEnderecosController {
     @Operation(summary = "Listar meus endereços")
     @GetMapping("/addresses")
     @PreAuthorize("isAuthenticated()")
-    public List<AddressResponse> myAddresses() {
-        return addressService.myAddresses();
+    public ResponseEntity<List<AddressResponse>> myAddresses() {
+        return ResponseEntity.ok(addressService.myAddresses());
     }
 
     @Operation(summary = "Cadastrar endereço")
     @PostMapping("/addresses")
     @PreAuthorize("isAuthenticated()")
-    public AddressResponse saveAddress(@Valid @RequestBody CreateAddressRequest request) {
-        return addressService.save(request);
+    public ResponseEntity<AddressResponse> saveAddress(@Valid @RequestBody CreateAddressRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(addressService.save(request));
     }
 
     @Operation(summary = "Atualizar endereço")
     @PutMapping("/addresses/{id}")
     @PreAuthorize("isAuthenticated()")
-    public AddressResponse updateAddress(@PathVariable Long id, @Valid @RequestBody CreateAddressRequest request) {
-        return addressService.update(id, request);
+    public ResponseEntity<AddressResponse> updateAddress(@PathVariable Long id, @Valid @RequestBody CreateAddressRequest request) {
+        return ResponseEntity.ok(addressService.update(id, request));
     }
 
     @Operation(summary = "Excluir endereço")
     @DeleteMapping("/addresses/{id}")
     @PreAuthorize("isAuthenticated()")
-    public void deleteAddress(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAddress(@PathVariable Long id) {
         addressService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
 

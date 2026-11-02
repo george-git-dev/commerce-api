@@ -1,5 +1,6 @@
 package br.com.george.commerce.controller.publico.catalogo;
 
+import org.springframework.http.ResponseEntity;
 import br.com.george.commerce.dto.promotion.PromotionResponse;
 import br.com.george.commerce.service.PromotionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,13 +26,13 @@ public class PromocaoPublicoController {
 
     @Operation(summary = "Listar promoções")
     @GetMapping
-    public List<PromotionResponse> findAll() {
-        return promotionService.findAll();
+    public ResponseEntity<List<PromotionResponse>> findAll() {
+        return ResponseEntity.ok(promotionService.findAll());
     }
 
     @Operation(summary = "Consultar promoção")
     @GetMapping("/{id}")
-    public PromotionResponse findById(@PathVariable Long id) {
-        return promotionService.findById(id);
+    public ResponseEntity<PromotionResponse> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(promotionService.findById(id));
     }
 }

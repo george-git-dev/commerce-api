@@ -1,5 +1,7 @@
 package br.com.george.commerce.controller.admin.catalogo;
 
+import br.com.george.commerce.util.Locations;
+import org.springframework.http.ResponseEntity;
 import br.com.george.commerce.dto.category.CategoryResponse;
 import br.com.george.commerce.dto.category.CreateCategoryRequest;
 import br.com.george.commerce.service.CategoryService;
@@ -24,21 +26,23 @@ public class CategoriaController {
     @Operation(summary = "Cadastrar categoria")
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
-    public CategoryResponse save(@Valid @RequestBody CreateCategoryRequest request) {
-        return categoryService.save(request);
+    public ResponseEntity<CategoryResponse> save(@Valid @RequestBody CreateCategoryRequest request) {
+        CategoryResponse created = categoryService.save(request);
+        return ResponseEntity.created(Locations.of("/categories/{id}", created.id())).body(created);
     }
 
     @Operation(summary = "Excluir categoria")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         categoryService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Atualizar categoria")
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
-    public CategoryResponse update(@PathVariable Long id,@Valid @RequestBody CreateCategoryRequest request) {
-        return categoryService.update(id, request);
+    public ResponseEntity<CategoryResponse> update(@PathVariable Long id,@Valid @RequestBody CreateCategoryRequest request) {
+        return ResponseEntity.ok(categoryService.update(id, request));
     }
 }

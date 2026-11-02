@@ -1,5 +1,6 @@
 package br.com.george.commerce.controller.admin.relatorio;
 
+import org.springframework.http.ResponseEntity;
 import br.com.george.commerce.dto.report.affiliate.AffiliateRankingResponse;
 import br.com.george.commerce.dto.report.sales.SalesReportRequest;
 import br.com.george.commerce.service.SalesReportService;
@@ -28,8 +29,8 @@ public class RelatorioAfiliadoController {
     @Operation(summary = "Ranking de afiliados")
     @PostMapping("/ranking")
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
-    public List<AffiliateRankingResponse> ranking(@RequestBody SalesReportRequest request) {
-        return salesReportService.getAffiliateRanking(request);
+    public ResponseEntity<List<AffiliateRankingResponse>> ranking(@RequestBody SalesReportRequest request) {
+        return ResponseEntity.ok(salesReportService.getAffiliateRanking(request));
     }
 }
 

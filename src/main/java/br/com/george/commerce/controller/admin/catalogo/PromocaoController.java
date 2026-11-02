@@ -1,5 +1,7 @@
 package br.com.george.commerce.controller.admin.catalogo;
 
+import br.com.george.commerce.util.Locations;
+import org.springframework.http.ResponseEntity;
 import br.com.george.commerce.dto.promotion.CreatePromotionRequest;
 import br.com.george.commerce.dto.promotion.LinkPromotionToProductRequest;
 import br.com.george.commerce.dto.promotion.PromotionResponse;
@@ -25,28 +27,31 @@ public class PromocaoController {
     @Operation(summary = "Cadastrar promoção")
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
-    public PromotionResponse save(@Valid @RequestBody CreatePromotionRequest request) {
-        return promotionService.save(request);
+    public ResponseEntity<PromotionResponse> save(@Valid @RequestBody CreatePromotionRequest request) {
+        PromotionResponse created = promotionService.save(request);
+        return ResponseEntity.created(Locations.of("/promotions/{id}", created.id())).body(created);
     }
 
     @Operation(summary = "Atualizar promoção")
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
-    public PromotionResponse update(@PathVariable Long id, @Valid @RequestBody CreatePromotionRequest request) {
-        return promotionService.update(id, request);
+    public ResponseEntity<PromotionResponse> update(@PathVariable Long id, @Valid @RequestBody CreatePromotionRequest request) {
+        return ResponseEntity.ok(promotionService.update(id, request));
     }
 
     @Operation(summary = "Excluir promoção")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         promotionService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Vincular promoção a produto")
     @PostMapping("/link-product")
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
-    public void linkToProduct(@Valid @RequestBody LinkPromotionToProductRequest request) {
+    public ResponseEntity<Void> linkToProduct(@Valid @RequestBody LinkPromotionToProductRequest request) {
         promotionService.linkToProduct(request);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,5 +1,6 @@
 package br.com.george.commerce.controller.me;
 
+import org.springframework.http.ResponseEntity;
 import br.com.george.commerce.dto.cart.ApplyCouponRequest;
 import br.com.george.commerce.dto.cart.CartResponse;
 import br.com.george.commerce.dto.cart.CreateCartItemRequest;
@@ -33,43 +34,46 @@ public class MeuCarrinhoController {
     @Operation(summary = "Ver minha sacola")
     @GetMapping("/cart")
     @PreAuthorize("isAuthenticated()")
-    public CartResponse myCart() {
-        return cartService.myCart();
+    public ResponseEntity<CartResponse> myCart() {
+        return ResponseEntity.ok(cartService.myCart());
     }
 
     @Operation(summary = "Esvaziar sacola")
     @DeleteMapping("/cart")
     @PreAuthorize("isAuthenticated()")
-    public void clearCart() {
+    public ResponseEntity<Void> clearCart() {
         cartService.clearCart();
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Adicionar item à sacola")
     @PostMapping("/cart/items")
     @PreAuthorize("isAuthenticated()")
-    public CartResponse addItem(@Valid @RequestBody CreateCartItemRequest request) {
-        return cartService.addItem(request);
+    public ResponseEntity<CartResponse> addItem(@Valid @RequestBody CreateCartItemRequest request) {
+        return ResponseEntity.ok(cartService.addItem(request));
     }
 
     @Operation(summary = "Alterar quantidade do item")
     @PatchMapping("/cart/items/{itemId}")
     @PreAuthorize("isAuthenticated()")
-    public CartResponse updateItemQuantity(@PathVariable Long itemId, @Valid @RequestBody UpdateCartItemRequest request) {
-        return cartService.updateItemQuantity(itemId, request);
+    public ResponseEntity<CartResponse> updateItemQuantity(@PathVariable Long itemId, @Valid @RequestBody UpdateCartItemRequest request) {
+        return ResponseEntity.ok(cartService.updateItemQuantity(itemId, request));
     }
 
     @Operation(summary = "Remover item da sacola")
     @DeleteMapping("/cart/items/{itemId}")
     @PreAuthorize("isAuthenticated()")
-    public void removeItem(@PathVariable Long itemId) {
+    public ResponseEntity<Void> removeItem(@PathVariable Long itemId) {
         cartService.removeItem(itemId);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Aplicar cupom")
     @PostMapping("/cart/coupon")
     @PreAuthorize("isAuthenticated()")
-    public void applyCoupon(@Valid @RequestBody ApplyCouponRequest request) {
+    public ResponseEntity<Void> applyCoupon(@Valid @RequestBody ApplyCouponRequest request) {
         cartService.applyCoupon(request.couponCode());
+        return ResponseEntity.noContent().build();
     }
 }
 

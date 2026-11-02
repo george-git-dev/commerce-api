@@ -1,5 +1,6 @@
 package br.com.george.commerce.controller.admin.relatorio;
 
+import org.springframework.http.ResponseEntity;
 import br.com.george.commerce.dto.report.customer.CustomerStatsResponse;
 import br.com.george.commerce.service.SalesReportService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,8 +27,8 @@ public class RelatorioClienteController {
     @Operation(summary = "Indicadores de clientes")
     @GetMapping
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
-    public List<CustomerStatsResponse> getCustomerStatistics() {
-        return salesReportService.getCustomerStatistics();
+    public ResponseEntity<List<CustomerStatsResponse>> getCustomerStatistics() {
+        return ResponseEntity.ok(salesReportService.getCustomerStatistics());
     }
 }
 

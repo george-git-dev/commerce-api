@@ -1367,6 +1367,53 @@ paths:
           description: Erro inesperado (code INTERNAL_ERROR)
         "503":
           description: Banco indisponível (code SERVICE_UNAVAILABLE)
+  /me:
+    get:
+      tags:
+      - Área do Cliente - Minha Conta
+      summary: Meus dados na loja
+      operationId: user
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
+    patch:
+      tags:
+      - Área do Cliente - Minha Conta
+      summary: Atualizar celular e CPF
+      operationId: update_5
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /me/cart/items/{itemId}:
     delete:
       tags:
@@ -1565,27 +1612,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/OrderResponse"
-        "401":
-          description: Sem token ou token inválido
-        "403":
-          description: Sem permissão (code ACCESS_DENIED)
-        "500":
-          description: Erro inesperado (code INTERNAL_ERROR)
-        "503":
-          description: Banco indisponível (code SERVICE_UNAVAILABLE)
-  /me:
-    get:
-      tags:
-      - Área do Cliente - Minha Conta
-      summary: Meus dados na loja
-      operationId: user
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/UserResponse"
         "401":
           description: Sem token ou token inválido
         "403":
@@ -2408,14 +2434,14 @@ components:
           - CANCELADO
       required:
       - status
-    UpdateCartItemRequest:
+    UpdateProfileRequest:
       type: object
       properties:
-        quantity:
-          type: integer
-          format: int32
-      required:
-      - quantity
+        phone:
+          type: string
+          pattern: "^(\\d{10,11})?$"
+        cpf:
+          type: string
     UserResponse:
       type: object
       properties:
@@ -2432,6 +2458,14 @@ components:
           type: string
         active:
           type: boolean
+    UpdateCartItemRequest:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          format: int32
+      required:
+      - quantity
     ExpenseCategoryStatsResponse:
       type: object
       properties:

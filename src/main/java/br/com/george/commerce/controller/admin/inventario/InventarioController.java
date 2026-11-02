@@ -1,5 +1,6 @@
 package br.com.george.commerce.controller.admin.inventario;
 
+import org.springframework.http.ResponseEntity;
 import br.com.george.commerce.dto.report.inventory.BrandInventoryStatsResponse;
 import br.com.george.commerce.dto.report.inventory.CategoryInventoryStatsResponse;
 import br.com.george.commerce.dto.report.inventory.InventoryFilterRequest;
@@ -29,29 +30,29 @@ public class InventarioController {
     @Operation(summary = "Listar produtos do estoque")
     @PostMapping("/products")
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
-    public List<InventoryProductResponse> findProducts(@Valid @RequestBody InventoryFilterRequest request) {
-        return productService.findInventoryProducts(request);
+    public ResponseEntity<List<InventoryProductResponse>> findProducts(@Valid @RequestBody InventoryFilterRequest request) {
+        return ResponseEntity.ok(productService.findInventoryProducts(request));
     }
 
     @Operation(summary = "Resumo do estoque")
     @GetMapping("/summary")
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
-    public InventorySummaryResponse getSummary() {
-        return productService.getInventorySummary();
+    public ResponseEntity<InventorySummaryResponse> getSummary() {
+        return ResponseEntity.ok(productService.getInventorySummary());
     }
 
     @Operation(summary = "Estoque por categoria")
     @GetMapping("/statistics/categories")
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
-    public List<CategoryInventoryStatsResponse> getCategoryStatistics() {
-        return productService.getCategoryStatistics();
+    public ResponseEntity<List<CategoryInventoryStatsResponse>> getCategoryStatistics() {
+        return ResponseEntity.ok(productService.getCategoryStatistics());
     }
 
     @Operation(summary = "Estoque por marca")
     @GetMapping("/statistics/brands")
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
-    public List<BrandInventoryStatsResponse> getBrandStatistics() {
-        return productService.getBrandStatistics();
+    public ResponseEntity<List<BrandInventoryStatsResponse>> getBrandStatistics() {
+        return ResponseEntity.ok(productService.getBrandStatistics());
     }
 
 }

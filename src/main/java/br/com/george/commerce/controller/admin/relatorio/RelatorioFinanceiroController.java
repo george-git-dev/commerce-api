@@ -1,5 +1,6 @@
 package br.com.george.commerce.controller.admin.relatorio;
 
+import org.springframework.http.ResponseEntity;
 import br.com.george.commerce.dto.report.financial.ExpenseCategoryStatsResponse;
 import br.com.george.commerce.service.SalesReportService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,8 +27,8 @@ public class RelatorioFinanceiroController {
     @Operation(summary = "Despesas por categoria")
     @GetMapping("/expenses/categories")
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
-    public List<ExpenseCategoryStatsResponse> getExpenseCategoryStatistics() {
-        return salesReportService.getExpenseCategoryStatistics();
+    public ResponseEntity<List<ExpenseCategoryStatsResponse>> getExpenseCategoryStatistics() {
+        return ResponseEntity.ok(salesReportService.getExpenseCategoryStatistics());
     }
 }
 

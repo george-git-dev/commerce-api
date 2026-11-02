@@ -1,5 +1,7 @@
 package br.com.george.commerce.controller.admin.catalogo;
 
+import br.com.george.commerce.util.Locations;
+import org.springframework.http.ResponseEntity;
 import br.com.george.commerce.dto.product.CreateProductRequest;
 import br.com.george.commerce.dto.product.ProductResponse;
 import br.com.george.commerce.service.ProductService;
@@ -24,21 +26,23 @@ public class ProdutoController {
     @Operation(summary = "Cadastrar produto")
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
-    public ProductResponse save(@Valid @RequestBody CreateProductRequest request) {
-        return productService.save(request);
+    public ResponseEntity<ProductResponse> save(@Valid @RequestBody CreateProductRequest request) {
+        ProductResponse created = productService.save(request);
+        return ResponseEntity.created(Locations.of("/products/{id}", created.id())).body(created);
     }
 
     @Operation(summary = "Atualizar produto")
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
-    public ProductResponse update(@PathVariable Long id, @Valid @RequestBody CreateProductRequest request) {
-        return productService.update(id, request);
+    public ResponseEntity<ProductResponse> update(@PathVariable Long id, @Valid @RequestBody CreateProductRequest request) {
+        return ResponseEntity.ok(productService.update(id, request));
     }
 
     @Operation(summary = "Excluir produto")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         productService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

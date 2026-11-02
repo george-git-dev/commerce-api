@@ -1,5 +1,7 @@
 package br.com.george.commerce.controller.admin.vendamanual;
 
+import br.com.george.commerce.util.Locations;
+import org.springframework.http.ResponseEntity;
 import br.com.george.commerce.dto.manualsale.ManualSaleRequest;
 import br.com.george.commerce.dto.order.OrderResponse;
 import br.com.george.commerce.service.ManualSaleService;
@@ -27,8 +29,9 @@ public class VendaManualController {
     @Operation(summary = "Registrar venda manual")
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
-    public OrderResponse createSale(@Valid @RequestBody ManualSaleRequest request) {
-        return manualSaleService.createSale(request);
+    public ResponseEntity<OrderResponse> createSale(@Valid @RequestBody ManualSaleRequest request) {
+        OrderResponse created = manualSaleService.createSale(request);
+        return ResponseEntity.created(Locations.of("/orders/{id}", created.id())).body(created);
     }
 }
 

@@ -1,5 +1,7 @@
 package br.com.george.commerce.controller.me;
 
+import br.com.george.commerce.util.Locations;
+import org.springframework.http.ResponseEntity;
 import br.com.george.commerce.dto.affiliate.*;
 import br.com.george.commerce.service.AffiliateSaleService;
 import br.com.george.commerce.service.AffiliateService;
@@ -27,29 +29,30 @@ public class MeuAfiliadoController {
     @Operation(summary = "Tornar-se afiliado")
     @PostMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    public AffiliateResponse becomeAffiliate() {
-        return affiliateService.becomeAffiliate();
+    public ResponseEntity<AffiliateResponse> becomeAffiliate() {
+        AffiliateResponse created = affiliateService.becomeAffiliate();
+        return ResponseEntity.created(Locations.of("/affiliates/me")).body(created);
     }
 
     @Operation(summary = "Meus dados de afiliado")
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    public MyAffiliateResponse myAffiliate() {
-        return affiliateService.myAffiliate();
+    public ResponseEntity<MyAffiliateResponse> myAffiliate() {
+        return ResponseEntity.ok(affiliateService.myAffiliate());
     }
 
     @Operation(summary = "Minhas vendas como afiliado")
     @GetMapping("/me/sales")
     @PreAuthorize("isAuthenticated()")
-    public List<AffiliateSaleResponse> mySales() {
-        return affiliateService.mySales();
+    public ResponseEntity<List<AffiliateSaleResponse>> mySales() {
+        return ResponseEntity.ok(affiliateService.mySales());
     }
 
     @Operation(summary = "Resumo das minhas comissões")
     @PostMapping("/me/summary")
     @PreAuthorize("isAuthenticated()")
-    public AffiliateSummaryResponse mySummary(@RequestBody AffiliateReportRequest request) {
-        return affiliateService.mySummary(request);
+    public ResponseEntity<AffiliateSummaryResponse> mySummary(@RequestBody AffiliateReportRequest request) {
+        return ResponseEntity.ok(affiliateService.mySummary(request));
     }
 }
 

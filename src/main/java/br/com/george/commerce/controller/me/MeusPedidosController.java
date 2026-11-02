@@ -1,5 +1,7 @@
 package br.com.george.commerce.controller.me;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import br.com.george.commerce.dto.order.CreateOrderRequest;
 import br.com.george.commerce.dto.order.OrderResponse;
 import br.com.george.commerce.service.OrderService;
@@ -30,15 +32,15 @@ public class MeusPedidosController {
     @Operation(summary = "Listar meus pedidos")
     @GetMapping("/orders")
     @PreAuthorize("isAuthenticated()")
-    public List<OrderResponse> myOrders() {
-        return orderService.myOrders();
+    public ResponseEntity<List<OrderResponse>> myOrders() {
+        return ResponseEntity.ok(orderService.myOrders());
     }
 
     @Operation(summary = "Finalizar compra")
     @PostMapping("/orders/checkout")
     @PreAuthorize("isAuthenticated()")
-    public OrderResponse checkout(@Valid @RequestBody CreateOrderRequest request) {
-        return orderService.checkout(request);
+    public ResponseEntity<OrderResponse> checkout(@Valid @RequestBody CreateOrderRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.checkout(request));
     }
 }
 

@@ -1,5 +1,6 @@
 package br.com.george.commerce.controller.publico.catalogo;
 
+import org.springframework.http.ResponseEntity;
 import br.com.george.commerce.dto.category.CategoryResponse;
 import br.com.george.commerce.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,13 +26,13 @@ public class CategoriaPublicoController {
 
     @Operation(summary = "Listar categorias")
     @GetMapping
-    public List<CategoryResponse> findAll() {
-        return categoryService.findAll();
+    public ResponseEntity<List<CategoryResponse>> findAll() {
+        return ResponseEntity.ok(categoryService.findAll());
     }
 
     @Operation(summary = "Consultar categoria")
     @GetMapping("/{id}")
-    public CategoryResponse findById(@PathVariable Long id) {
-        return categoryService.findById(id);
+    public ResponseEntity<CategoryResponse> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(categoryService.findById(id));
     }
 }

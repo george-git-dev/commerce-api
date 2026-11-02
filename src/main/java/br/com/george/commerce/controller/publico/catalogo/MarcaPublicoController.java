@@ -1,5 +1,6 @@
 package br.com.george.commerce.controller.publico.catalogo;
 
+import org.springframework.http.ResponseEntity;
 import br.com.george.commerce.dto.brand.BrandResponse;
 import br.com.george.commerce.service.BrandService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,13 +26,13 @@ public class MarcaPublicoController {
 
     @Operation(summary = "Listar marcas")
     @GetMapping
-    public List<BrandResponse> findAll() {
-        return brandService.findAll();
+    public ResponseEntity<List<BrandResponse>> findAll() {
+        return ResponseEntity.ok(brandService.findAll());
     }
 
     @Operation(summary = "Consultar marca")
     @GetMapping("/{id}")
-    public BrandResponse findById(@PathVariable Long id) {
-        return brandService.findById(id);
+    public ResponseEntity<BrandResponse> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(brandService.findById(id));
     }
 }

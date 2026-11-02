@@ -1,5 +1,6 @@
 package br.com.george.commerce.controller.admin.usuario;
 
+import org.springframework.http.ResponseEntity;
 import br.com.george.commerce.dto.user.UserResponse;
 import br.com.george.commerce.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,15 +32,15 @@ public class UsuarioController {
     @Operation(summary = "Listar usuários")
     @GetMapping
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
-    public List<UserResponse> findAll() {
-        return userService.findAll();
+    public ResponseEntity<List<UserResponse>> findAll() {
+        return ResponseEntity.ok(userService.findAll());
     }
 
     @Operation(summary = "Consultar usuário")
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
-    public UserResponse findById(@PathVariable Long id) {
-        return userService.findById(id);
+    public ResponseEntity<UserResponse> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.findById(id));
     }
 
 }

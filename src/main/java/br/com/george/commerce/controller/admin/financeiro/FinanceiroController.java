@@ -1,5 +1,6 @@
 package br.com.george.commerce.controller.admin.financeiro;
 
+import org.springframework.http.ResponseEntity;
 import br.com.george.commerce.dto.financial.FinancialSummaryRequest;
 import br.com.george.commerce.dto.financial.FinancialSummaryResponse;
 import br.com.george.commerce.service.FinancialService;
@@ -26,8 +27,8 @@ public class FinanceiroController {
     @Operation(summary = "Resumo financeiro do período")
     @PostMapping("/summary")
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
-    public FinancialSummaryResponse summary(@RequestBody FinancialSummaryRequest request) {
-        return financialService.summary(request);
+    public ResponseEntity<FinancialSummaryResponse> summary(@RequestBody FinancialSummaryRequest request) {
+        return ResponseEntity.ok(financialService.summary(request));
     }
 }
 

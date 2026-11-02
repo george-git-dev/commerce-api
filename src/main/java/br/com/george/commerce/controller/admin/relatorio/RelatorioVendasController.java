@@ -28,8 +28,8 @@ public class RelatorioVendasController {
     @Operation(summary = "Resumo de vendas do período")
     @PostMapping
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
-    public SalesSummaryResponse summary(@RequestBody SalesReportRequest request) {
-        return salesReportService.summary(request);
+    public ResponseEntity<SalesSummaryResponse> summary(@RequestBody SalesReportRequest request) {
+        return ResponseEntity.ok(salesReportService.summary(request));
     }
 
     @Operation(summary = "Produtos mais vendidos")
@@ -42,15 +42,15 @@ public class RelatorioVendasController {
     @Operation(summary = "Categorias mais vendidas")
     @PostMapping("/top-categories")
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
-    public List<TopCategoryResponse> topCategories(@RequestBody SalesReportRequest request) {
-        return salesReportService.getTopCategories(request);
+    public ResponseEntity<List<TopCategoryResponse>> topCategories(@RequestBody SalesReportRequest request) {
+        return ResponseEntity.ok(salesReportService.getTopCategories(request));
     }
 
     @Operation(summary = "Marcas mais vendidas")
     @PostMapping("/top-brands")
     @PreAuthorize("hasAnyRole('VIEWER','ADMIN','SUPER_ADMIN')")
-    public List<TopBrandResponse> topBrands(@RequestBody SalesReportRequest request) {
-        return salesReportService.getTopBrands(request);
+    public ResponseEntity<List<TopBrandResponse>> topBrands(@RequestBody SalesReportRequest request) {
+        return ResponseEntity.ok(salesReportService.getTopBrands(request));
     }
 }
 
