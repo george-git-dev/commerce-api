@@ -37,6 +37,8 @@ tags:
   description: Consulta de usuários da loja.
 - name: Administração - Despesas
   description: Cadastro e manutenção de despesas.
+- name: Público - Vitrine
+  description: "Produtos publicados da loja, no formato da vitrine."
 - name: Administração - Relatórios de Afiliados
   description: Rankings e estatísticas de afiliados.
 - name: Administração - Pagamentos
@@ -1747,6 +1749,176 @@ paths:
           description: Erro inesperado (code INTERNAL_ERROR)
         "503":
           description: Banco indisponível (code SERVICE_UNAVAILABLE)
+  /catalog/products:
+    get:
+      tags:
+      - Público - Vitrine
+      summary: "Buscar produtos (filtros, ordem e página)"
+      operationId: search
+      parameters:
+      - name: category
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: family
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: occasion
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: gender
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: brand
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: minPrice
+        in: query
+        required: false
+        schema:
+          type: number
+          minimum: 0
+      - name: maxPrice
+        in: query
+        required: false
+        schema:
+          type: number
+          minimum: 0
+      - name: q
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: inStock
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: kind
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: deal
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: launch
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: bestSeller
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: badge
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: sort
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          maximum: 60
+          minimum: 1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CatalogPageResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
+  /catalog/products/{slug}:
+    get:
+      tags:
+      - Público - Vitrine
+      summary: Consultar produto pelo slug
+      operationId: findBySlug
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CatalogProductResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
+  /catalog/filters:
+    get:
+      tags:
+      - Público - Vitrine
+      summary: Opções de filtro
+      operationId: filters
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CatalogFiltersResponse"
+        "401":
+          description: Sem token ou token inválido
+        "403":
+          description: Sem permissão (code ACCESS_DENIED)
+        "500":
+          description: Erro inesperado (code INTERNAL_ERROR)
+        "503":
+          description: Banco indisponível (code SERVICE_UNAVAILABLE)
   /affiliates/me/sales:
     get:
       tags:
@@ -2517,6 +2689,146 @@ components:
         totalProducts:
           type: integer
           format: int64
+    CatalogNotesResponse:
+      type: object
+      properties:
+        top:
+          type: array
+          items:
+            type: string
+        heart:
+          type: array
+          items:
+            type: string
+        base:
+          type: array
+          items:
+            type: string
+    CatalogPageResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CatalogProductResponse"
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        totalItems:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+    CatalogProductResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        slug:
+          type: string
+        line:
+          type: string
+        subtitle:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        brandId:
+          type: integer
+          format: int64
+        brandName:
+          type: string
+        category:
+          type: string
+        gender:
+          type: string
+        concentration:
+          type: string
+        families:
+          type: array
+          items:
+            type: string
+        notes:
+          $ref: "#/components/schemas/CatalogNotesResponse"
+        kitItems:
+          type: array
+          items:
+            type: string
+        occasions:
+          type: array
+          items:
+            type: string
+        launch:
+          type: boolean
+        bestSeller:
+          type: boolean
+        badge:
+          type: string
+        soldCount:
+          type: integer
+          format: int32
+        images:
+          type: array
+          items:
+            type: string
+        variants:
+          type: array
+          items:
+            $ref: "#/components/schemas/CatalogVariantResponse"
+    CatalogVariantResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+        volumeMl:
+          type: integer
+          format: int32
+        price:
+          type: number
+        promoPrice:
+          type: number
+        stock:
+          type: integer
+          format: int32
+    CatalogFiltersResponse:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            type: string
+        brands:
+          type: array
+          items:
+            type: string
+        families:
+          type: array
+          items:
+            type: string
+        occasions:
+          type: array
+          items:
+            type: string
+        genders:
+          type: array
+          items:
+            type: string
+        badges:
+          type: array
+          items:
+            type: string
+        minPrice:
+          type: number
+        maxPrice:
+          type: number
     MyAffiliateResponse:
       type: object
       properties:

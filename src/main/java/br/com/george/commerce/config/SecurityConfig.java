@@ -82,6 +82,7 @@ public class SecurityConfig {
                         // visitante navega sem autenticar.
                         .requestMatchers(
                                 HttpMethod.GET,
+                                "/catalog/**",
                                 "/products",
                                 "/products/**",
                                 "/categories",

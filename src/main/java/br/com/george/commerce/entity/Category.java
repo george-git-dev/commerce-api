@@ -18,5 +18,8 @@ public class Category {
 
     private String name;
 
+    /** Identificador da URL e do contrato da loja ({@code perfume}, {@code kit}…). */
+    private String slug;
+
     private Boolean active;
 }
