@@ -168,21 +168,21 @@ public class ProductServiceImpl implements ProductService {
 
         ProductResponse response = mapper.toResponse(product);
 
-        return new ProductResponse(
-                response.id(),
-                response.name(),
-                response.description(),
-                response.price(),
-                response.stock(),
-                response.active(),
-                response.categoryId(),
-                response.categoryName(),
-                response.brandId(),
-                response.brandName(),
-                response.attributes(),
-                finalPrice,
-                promotionActive
-        );
+        return ProductResponse.builder()
+                .id(response.id())
+                .name(response.name())
+                .description(response.description())
+                .price(response.price())
+                .stock(response.stock())
+                .active(response.active())
+                .categoryId(response.categoryId())
+                .categoryName(response.categoryName())
+                .brandId(response.brandId())
+                .brandName(response.brandName())
+                .attributes(response.attributes())
+                .finalPrice(finalPrice)
+                .promotionActive(promotionActive)
+                .build();
     }
 
     @Override
@@ -234,14 +234,14 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return products.stream()
-                .map(product -> new InventoryProductResponse(
-                        product.getId(),
-                        product.getName(),
-                        product.getCategory().getName(),
-                        product.getBrand().getName(),
-                        product.getStock(),
-                        product.getActive()
-                ))
+                .map(product -> InventoryProductResponse.builder()
+                        .id(product.getId())
+                        .name(product.getName())
+                        .categoryName(product.getCategory().getName())
+                        .brandName(product.getBrand().getName())
+                        .stock(product.getStock())
+                        .active(product.getActive())
+                        .build())
                 .toList();
     }
 
@@ -264,12 +264,12 @@ public class ProductServiceImpl implements ProductService {
                 .filter(product -> product.getStock() <= 0)
                 .count();
 
-        return new InventorySummaryResponse(
-                totalProducts,
-                activeProducts,
-                inactiveProducts,
-                outOfStockProducts
-        );
+        return InventorySummaryResponse.builder()
+                .totalProducts(totalProducts)
+                .activeProducts(activeProducts)
+                .inactiveProducts(inactiveProducts)
+                .outOfStockProducts(outOfStockProducts)
+                .build();
     }
 
     @Override
@@ -280,7 +280,10 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.groupingBy(product -> product.getCategory().getName()))
                 .entrySet()
                 .stream()
-                .map(entry -> new CategoryInventoryStatsResponse(entry.getKey(), (long) entry.getValue().size()))
+                .map(entry -> CategoryInventoryStatsResponse.builder()
+                        .categoryName(entry.getKey())
+                        .totalProducts((long) entry.getValue().size())
+                        .build())
                 .sorted(Comparator.comparing(CategoryInventoryStatsResponse::totalProducts).reversed())
                 .toList();
     }
@@ -293,7 +296,10 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.groupingBy(product -> product.getBrand().getName()))
                 .entrySet()
                 .stream()
-                .map(entry -> new BrandInventoryStatsResponse(entry.getKey(), (long) entry.getValue().size()))
+                .map(entry -> BrandInventoryStatsResponse.builder()
+                        .brandName(entry.getKey())
+                        .totalProducts((long) entry.getValue().size())
+                        .build())
                 .sorted(Comparator.comparing(BrandInventoryStatsResponse::totalProducts).reversed())
                 .toList();
     }

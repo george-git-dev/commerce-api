@@ -71,15 +71,15 @@ public class SalesReportServiceImpl implements SalesReportService {
 
         BigDecimal averageTicket = totalSales == 0 ? BigDecimal.ZERO : totalRevenue.divide(BigDecimal.valueOf(totalSales), 2, RoundingMode.HALF_UP);
 
-        return new SalesSummaryResponse(
-                totalSales,
-                onlineSales,
-                manualSales,
-                totalRevenue,
-                onlineRevenue,
-                manualRevenue,
-                averageTicket
-        );
+        return SalesSummaryResponse.builder()
+                .totalSales(totalSales)
+                .onlineSales(onlineSales)
+                .manualSales(manualSales)
+                .totalRevenue(totalRevenue)
+                .onlineRevenue(onlineRevenue)
+                .manualRevenue(manualRevenue)
+                .averageTicket(averageTicket)
+                .build();
     }
 
     @Override
@@ -104,11 +104,11 @@ public class SalesReportServiceImpl implements SalesReportService {
                             .map(OrderItem::getSubtotal)
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                    return new TopProductResponse(
-                            entry.getKey(),
-                            quantitySold,
-                            revenue
-                    );
+                    return TopProductResponse.builder()
+                            .productName(entry.getKey())
+                            .quantitySold(quantitySold)
+                            .revenue(revenue)
+                            .build();
                 })
                 .sorted(Comparator.comparing(TopProductResponse::quantitySold).reversed())
                 .toList();
@@ -168,11 +168,11 @@ public class SalesReportServiceImpl implements SalesReportService {
                             .map(OrderItem::getSubtotal)
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                    return new TopCategoryResponse(
-                            entry.getKey(),
-                            quantitySold,
-                            revenue
-                    );
+                    return TopCategoryResponse.builder()
+                            .categoryName(entry.getKey())
+                            .quantitySold(quantitySold)
+                            .revenue(revenue)
+                            .build();
                 })
                 .sorted(Comparator.comparing(
                                 TopCategoryResponse::quantitySold)
@@ -206,11 +206,11 @@ public class SalesReportServiceImpl implements SalesReportService {
                             .map(OrderItem::getSubtotal)
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                    return new TopBrandResponse(
-                            entry.getKey(),
-                            quantitySold,
-                            revenue
-                    );
+                    return TopBrandResponse.builder()
+                            .brandName(entry.getKey())
+                            .quantitySold(quantitySold)
+                            .revenue(revenue)
+                            .build();
                 })
                 .sorted(Comparator.comparing(
                                 TopBrandResponse::quantitySold)
@@ -263,13 +263,13 @@ public class SalesReportServiceImpl implements SalesReportService {
                             .map(AffiliateSale::getCommissionAmount)
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                    return new AffiliateRankingResponse(
-                            affiliate.getId(),
-                            affiliate.getUser().getName(),
-                            totalSales,
-                            totalRevenue,
-                            totalCommission
-                    );
+                    return AffiliateRankingResponse.builder()
+                            .affiliateId(affiliate.getId())
+                            .affiliateName(affiliate.getUser().getName())
+                            .totalSales(totalSales)
+                            .totalRevenue(totalRevenue)
+                            .totalCommission(totalCommission)
+                            .build();
                 })
                 .sorted(Comparator.comparing(AffiliateRankingResponse::totalSales).reversed())
                 .toList();
@@ -302,13 +302,13 @@ public class SalesReportServiceImpl implements SalesReportService {
                             .max(LocalDateTime::compareTo)
                             .orElse(null);
 
-                    return new CustomerStatsResponse(
-                            user.getId(),
-                            user.getName(),
-                            totalOrders,
-                            totalSpent,
-                            lastPurchase
-                    );
+                    return CustomerStatsResponse.builder()
+                            .userId(user.getId())
+                            .userName(user.getName())
+                            .totalOrders(totalOrders)
+                            .totalSpent(totalSpent)
+                            .lastPurchase(lastPurchase)
+                            .build();
                 })
                 .sorted(
                         Comparator.comparing(
@@ -335,10 +335,10 @@ public class SalesReportServiceImpl implements SalesReportService {
                             .map(Expense::getAmount)
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                    return new ExpenseCategoryStatsResponse(
-                            entry.getKey().name(),
-                            totalAmount
-                    );
+                    return ExpenseCategoryStatsResponse.builder()
+                            .categoryName(entry.getKey().name())
+                            .totalAmount(totalAmount)
+                            .build();
                 })
                 .sorted(
                         Comparator.comparing(

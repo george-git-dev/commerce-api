@@ -115,7 +115,12 @@ public class AffiliateServiceImpl implements AffiliateService {
                 .map(AffiliateSale::getCommissionAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return new AffiliateSummaryResponse(totalSales, totalCommission, pendingCommission, paidCommission);
+        return AffiliateSummaryResponse.builder()
+                .totalSales(totalSales)
+                .totalCommission(totalCommission)
+                .pendingCommission(pendingCommission)
+                .paidCommission(paidCommission)
+                .build();
     }
 
 

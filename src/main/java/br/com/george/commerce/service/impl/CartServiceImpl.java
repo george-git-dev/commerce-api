@@ -86,16 +86,16 @@ public class CartServiceImpl implements CartService {
 
         CartResponse response = mapper.toResponse(cart);
 
-        return new CartResponse(
-                response.id(),
-                response.userId(),
-                response.userName(),
-                calculateTotal(cart),
-                cart.getCouponCode(),
-                discountService.calculateDiscount(cart),
-                discountService.calculateTotalWithDiscount(cart),
-                response.items()
-        );
+        return CartResponse.builder()
+                .id(response.id())
+                .userId(response.userId())
+                .userName(response.userName())
+                .total(calculateTotal(cart))
+                .couponCode(cart.getCouponCode())
+                .discountApplied(discountService.calculateDiscount(cart))
+                .totalWithDiscount(discountService.calculateTotalWithDiscount(cart))
+                .items(response.items())
+                .build();
     }
 
     @Override
@@ -135,16 +135,16 @@ public class CartServiceImpl implements CartService {
 
         CartResponse response = mapper.toResponse(cart);
 
-        return new CartResponse(
-                response.id(),
-                response.userId(),
-                response.userName(),
-                calculateTotal(cart),
-                cart.getCouponCode(),
-                discountService.calculateDiscount(cart),
-                discountService.calculateTotalWithDiscount(cart),
-                response.items()
-        );
+        return CartResponse.builder()
+                .id(response.id())
+                .userId(response.userId())
+                .userName(response.userName())
+                .total(calculateTotal(cart))
+                .couponCode(cart.getCouponCode())
+                .discountApplied(discountService.calculateDiscount(cart))
+                .totalWithDiscount(discountService.calculateTotalWithDiscount(cart))
+                .items(response.items())
+                .build();
     }
 
     @Override
@@ -176,16 +176,16 @@ public class CartServiceImpl implements CartService {
 
         CartResponse response = mapper.toResponse(cart);
 
-        return new CartResponse(
-                response.id(),
-                response.userId(),
-                response.userName(),
-                calculateTotal(cart),
-                cart.getCouponCode(),
-                discountService.calculateDiscount(cart),
-                discountService.calculateTotalWithDiscount(cart),
-                response.items()
-        );
+        return CartResponse.builder()
+                .id(response.id())
+                .userId(response.userId())
+                .userName(response.userName())
+                .total(calculateTotal(cart))
+                .couponCode(cart.getCouponCode())
+                .discountApplied(discountService.calculateDiscount(cart))
+                .totalWithDiscount(discountService.calculateTotalWithDiscount(cart))
+                .items(response.items())
+                .build();
     }
 
     @Override

@@ -108,15 +108,15 @@ public class FinancialServiceImpl implements FinancialService {
             resultadoLiquido = resultadoLiquido.subtract(affiliateCommissions);
         }
 
-        return new FinancialSummaryResponse(
-                totalRevenue,
-                onlineRevenue,
-                manualRevenue,
-                totalExpenses,
-                affiliateCommissions,
-                resultadoBruto,
-                resultadoLiquido
-        );
+        return FinancialSummaryResponse.builder()
+                .totalRevenue(totalRevenue)
+                .onlineRevenue(onlineRevenue)
+                .manualRevenue(manualRevenue)
+                .totalExpenses(totalExpenses)
+                .affiliateCommissions(affiliateCommissions)
+                .resultadoBruto(resultadoBruto)
+                .resultadoLiquido(resultadoLiquido)
+                .build();
     }
 
 
