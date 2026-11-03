@@ -45,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
 
         Address address = addressRepository.findById(request.addressId()).orElseThrow(() -> new AddressNotFoundException(request.addressId()));
 
-        if (!address.getUser().getId().equals(userId)) {
+        if (!address.getUser().getId().equals(userId) || !Boolean.TRUE.equals(address.getActive())) {
             throw new InvalidAddressException();
         }
 

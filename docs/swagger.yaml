@@ -1957,11 +1957,6 @@ components:
           type: string
         primaryAddress:
           type: boolean
-        userId:
-          type: integer
-          format: int64
-        userName:
-          type: string
     CreateExpenseRequest:
       type: object
       properties:

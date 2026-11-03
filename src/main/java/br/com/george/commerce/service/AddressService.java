@@ -5,9 +5,8 @@ import br.com.george.commerce.dto.address.CreateAddressRequest;
 
 import java.util.List;
 
+/** Endereços do usuário logado (Minha conta → Endereços). */
 public interface AddressService {
-
-    AddressResponse findById(Long id);
 
     AddressResponse save(CreateAddressRequest request);
 

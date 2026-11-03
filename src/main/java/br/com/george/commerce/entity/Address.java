@@ -32,6 +32,10 @@ public class Address {
 
     private Boolean primaryAddress;
 
+    /** {@code false} = removido pelo cliente (some da conta; pedidos antigos continuam apontando). */
+    @Builder.Default
+    private Boolean active = true;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

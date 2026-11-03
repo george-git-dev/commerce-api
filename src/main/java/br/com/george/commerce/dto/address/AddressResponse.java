@@ -18,11 +18,7 @@ public record AddressResponse(
 
         String zipCode,
 
-        Boolean primaryAddress,
-
-        Long userId,
-
-        String userName
+        Boolean primaryAddress
 
 ) {
 }
