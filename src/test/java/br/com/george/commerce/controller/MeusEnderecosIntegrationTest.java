@@ -154,4 +154,17 @@ class MeusEnderecosIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.street").value("Informe a rua."));
     }
+
+    @Test
+    void zipCodeAndStateShouldHaveTheRightFormat() throws Exception {
+        String invalid = body("1", false).replace("\"01310100\"", "\"abc\"").replace("\"SP\"", "\"São Paulo\"");
+        as(newAccount(), post("/me/addresses").contentType(MediaType.APPLICATION_JSON).content(invalid))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors.zipCode").value("Informe um CEP válido, com 8 números."))
+                .andExpect(jsonPath("$.errors.state").value("Informe a UF com 2 letras (ex.: SP)."));
+        // Com ou sem traço, os dois formatos valem.
+        as(newAccount(), post("/me/addresses").contentType(MediaType.APPLICATION_JSON)
+                        .content(body("1", false).replace("\"01310100\"", "\"01310-100\"")))
+                .andExpect(status().isCreated());
+    }
 }
