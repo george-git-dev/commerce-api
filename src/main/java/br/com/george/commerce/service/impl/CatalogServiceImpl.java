@@ -286,13 +286,20 @@ public class CatalogServiceImpl implements CatalogService {
         Comparator<CatalogProductResponse> bestSellers =
                 Comparator.comparing(CatalogProductResponse::soldCount).reversed().thenComparing(newest);
         Comparator<CatalogProductResponse> byPrice = Comparator.comparing(CatalogServiceImpl::lowestPrice);
+        // Relevância: o que dá para comprar agora primeiro, depois os mais novos (não é igual a "mais vendidos").
+        Comparator<CatalogProductResponse> relevance =
+                Comparator.comparing(CatalogServiceImpl::isAvailable).reversed().thenComparing(newest);
         return switch (sort == null ? "relevance" : sort) {
             case "price_asc" -> byPrice.thenComparing(CatalogProductResponse::name, PT_BR);
             case "price_desc" -> byPrice.reversed().thenComparing(CatalogProductResponse::name, PT_BR);
             case "newest" -> newest;
-            // relevance e best_sellers: mais vendidos primeiro, depois os mais novos.
-            default -> bestSellers;
+            case "best_sellers" -> bestSellers;
+            default -> relevance;
         };
+    }
+
+    private static boolean isAvailable(CatalogProductResponse product) {
+        return product.variants().stream().anyMatch(variant -> variant.stock() != null && variant.stock() > 0);
     }
 
     private static BigDecimal lowestPrice(CatalogProductResponse product) {

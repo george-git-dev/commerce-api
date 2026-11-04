@@ -116,7 +116,11 @@ class VitrineIntegrationTest {
                 .andExpect(jsonPath("$.items[0].slug").value("al-haramain-amber-oud-gold-edition"));
         search("?sort=newest&size=1")
                 .andExpect(jsonPath("$.items[0].slug").value("al-wataniah-sabah-al-ward-creme-hidratante"));
-        search("?size=1").andExpect(jsonPath("$.items[0].slug").value("lattafa-asad"));
+        search("?sort=best_sellers&size=1").andExpect(jsonPath("$.items[0].slug").value("lattafa-asad"));
+        // Relevância (padrão): disponíveis primeiro, depois os mais novos — diferente de "mais vendidos".
+        search("?size=1")
+                .andExpect(jsonPath("$.items[0].slug").value("al-wataniah-sabah-al-ward-creme-hidratante"));
+        search("?size=60").andExpect(jsonPath("$.items[31].slug").value("lattafa-yara-locao-hidratante"));
     }
 
     @Test

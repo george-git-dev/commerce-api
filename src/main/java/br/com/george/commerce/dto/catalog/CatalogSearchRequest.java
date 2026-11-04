@@ -15,7 +15,7 @@ import java.util.List;
  * @param kind       frasco | decant: só produtos que têm esse formato
  * @param deal       destaques ({@code deal}, {@code launch}, {@code bestSeller}, {@code badge}) valem
  *                   como "ou" entre si: Lançamentos + Ofertas mostra os dois
- * @param sort       relevance (padrão: mais vendidos, depois mais novos) | price_asc | price_desc |
+ * @param sort       relevance (padrão: disponíveis primeiro, depois os mais novos) | price_asc | price_desc |
  *                   best_sellers | newest
  * @param page       começa em 0
  * @param size       1 a 60 (padrão 24)
